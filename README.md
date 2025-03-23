@@ -9,43 +9,48 @@ HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin)
 - [x] Implement edit
 - [x] Implement build
 - [x] Implement deploy
-- [ ] Implement project autodetection
-- [ ] Implement confirmation before running any shell commands
-- [ ] Add support for ramdisk images
-- [ ] Add support for remote targets
+- [x] Implement project autodetection
+- [x] Implement confirmation before running any shell commands
+- [x] Add support for ramdisk images
+- [x] Add support for remote targets
 - [ ] Add support for non-standard projects (xen, linux)
-- [ ] Make non-standard projects moulin-aware
+- [ ] Make non-standard projects moulin-aware(?)
 - [ ] Advanced deploy target (subfolders inside images)
+- [ ] Option to do remote via sshfs
 
 # Installation
-Symlink main.py somewhere in your PATH, for example:
-~~~
+Symlink main.py to somewhere in your PATH, and make it executable.
+~~~bash
 ln -s /path/to/highheat/main.py /usr/local/bin/hh
+chmod +x /usr/local/bin/hh
 ~~~
 
 # Usage
 ~~~
-usage: hh [-h] [--verbose] [--dryrun] {edit,build,deploy} ...
+usage: hh [-h] [--verbose] [--dryrun] [--noconfirm] {edit,e,build,b,deploy,d,build-deploy,bd} ...
 
 HighHeat, a fast BitBake alternative
 
 positional arguments:
-  {edit,build,deploy}  Action to perform
-    edit               Open source dir in editor
-    build              Build project
-    deploy             Deploy project
+  {edit,e,build,b,deploy,d,build-deploy,bd}
+                        Action to perform
+    edit (e)            Open source dir in editor
+    build (b)           Build project
+    deploy (d)          Deploy project
+    build-deploy (bd)   Build and deploy the project
 
 options:
-  -h, --help           show this help message and exit
-  --verbose, -v        Verbose output
-  --dryrun, -n         Dry run
+  -h, --help            show this help message and exit
+  --verbose, -v         Verbose output
+  --dryrun, -n          Dry run
+  --noconfirm, -y       Do not confirm commands
 
 Examples:
 
     Edit xen from DomD:
         hh edit domd xen
 
-    Build xen-tools in current yocto project:
+    Build xen-tools current yocto project:
         hh build xen-tools
 
     Deploy xen-tools to /srv/tftp:
@@ -67,3 +72,18 @@ Targets for deploy:
 * Local/remote directory
 * Local/remote ext4 image
 * Local/remote initrd image
+
+# Configuration
+HighHeat searches for the configuration file in the following order:
+~~~bash
+$XDG_CONFIG_HOME/.config/highheat.yaml
+$HOME/.config/highheat.yaml
+./highheat.yaml
+~~~
+
+Sample configuration:
+~~~yaml
+editor: nvim # Preferred editor
+confirm: true # Confirm before running shell commands
+dl_dir: /path/to/downloads # Persistent downloads directory
+~~~

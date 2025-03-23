@@ -76,24 +76,25 @@ class Project:
         return shell.run_cmd(f"{buildscript}")
 
 
-    def build(self) -> None:
+    def build(self) -> bool:
         logger.debug("build %s", self.projname)
         if not self.initialized:
-            return
+            return False
 
         if not self.run_compile(self.workdir):
             logger.error("Build failed")
-            return
+            return False
 
         if not self.run_install(self.workdir):
             logger.error("Install failed")
-            return
+            return False
 
         if not self.run_deploy(self.workdir):
             logger.error("Deploy failed")
-            return
+            return False
 
         logger.info("%s: Build successful", self.projname)
+        return True
 
     def preare_target(self, target:str) -> Path|None:
         self.tran = transport.find_transport(target)
@@ -145,9 +146,12 @@ class Project:
             return
 
         logger.info("%s: Deploy successful", self.projname)
-        del self.tran
-        del self.img
 
+        if self.img:
+            self.img.umount()
+
+        if self.tran:
+            self.tran.upload()
 
     @staticmethod
     def can_handle(_target:str) -> bool:

@@ -13,9 +13,11 @@ class Config:
     editorpath:str = 'vim'
     verbose:bool = False
     dryrun:bool = False
+    confirmcmd:bool = True
+    dldir:str = os.path.expanduser('~/.cache/highheat')
 
     def __str__(self) -> str:
-        return f"editorpath: {self.editorpath}"
+        return f"editorpath: {self.editorpath} confirmcmd: {self.confirmcmd}"
 
 conf = Config()
 
@@ -27,6 +29,10 @@ def load() -> Config:
                 config = yaml.safe_load(f)
                 if "editor" in config:
                     conf.editorpath = config["editor"]
+                if "confirm" in config:
+                    conf.confirmcmd = config["confirm"]
+                if "dldir" in config:
+                    conf.dldir = os.path.expanduser(config["dldir"])
             break
 
 

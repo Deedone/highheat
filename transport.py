@@ -23,7 +23,9 @@ class Transport:
         return True
 
 
+import transport_rsync
 TRANSPORT_TYPES = [
+    transport_rsync.TransportRemoteRsync,
     Transport
 ]
 

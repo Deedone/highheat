@@ -25,8 +25,10 @@ class Image:
 
 
 import image_ext4
+import image_ramfs
 IMAGE_TYPES = [
     image_ext4.ImageExt4,
+    image_ramfs.ImageRamfs,
     Image
 ]
 

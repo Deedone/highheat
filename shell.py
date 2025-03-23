@@ -1,14 +1,20 @@
 from log import logger
+import log
 import config
 import sys
 import subprocess
-import time
 
 
+def log_cmd(command: str) -> None:
+    logger.info("Running command:%s %s",log.RESET, command)
 
 def run_cmd(command: str) -> bool:
-    logger.info("Running command: %s", command)
-    time.sleep(5)
+    if config.conf.confirmcmd:
+        log_cmd(command)
+        if not input("Continue? [y/N]: ").lower() in 'yY':
+            return False
+    else:
+        log_cmd(command)
     
     if config.conf.dryrun:
         return True

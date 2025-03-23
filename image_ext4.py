@@ -9,6 +9,7 @@ class ImageExt4(image.Image):
     name:str = "Ext4"
     mount_point:Path = Path()
     tempdir:tempfile.TemporaryDirectory | None = None
+    mounted:bool = False
 
     def __init__(self, path:Path):
         super().__init__(path)
@@ -27,11 +28,15 @@ class ImageExt4(image.Image):
             logger.error("Failed to mount %s", self.path)
             return None
 
+        self.mounted = True
         return self.mount_point
 
 
     def umount(self) -> None:
-        shell.run_cmd(f"sudo umount {self.mount_point}")
+        if self.mounted:
+            shell.run_cmd(f"sudo umount {self.mount_point}")
+            self.mounted = False
+
         if self.tempdir:
             self.tempdir.cleanup()
 
