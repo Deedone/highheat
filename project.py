@@ -150,15 +150,22 @@ class Project:
 
         return mounted
 
+    def find_image(self) -> Path|None:
+        image = self.workdir / "image"
+
+        if not image.exists():
+            logger.error("Image not found")
+            return None
+
+        return image
+
     def deploy(self, target:str) -> None:
         logger.debug("deploy %s to %s", self.projname, target)
         if not self.initialized:
             return
 
-        image = self.workdir / "image"
-
-        if not image.exists():
-            logger.error("Image not found")
+        image = self.find_image()
+        if not image:
             return
 
         mounted = self.prepare_target(target)
@@ -167,7 +174,11 @@ class Project:
             logger.error("Prepare target failed")
             return
 
-        ret = shell.run_cmd(f"sudo cp -r {image}/* {mounted}")
+        if image.is_dir():
+            ret = shell.run_cmd(f"sudo cp -r {image}/* {mounted}")
+        else:
+            ret = shell.run_cmd(f"sudo cp {image} {mounted}")
+
         if not ret:
             logger.error("Copy failed")
             return
@@ -188,8 +199,10 @@ class Project:
 
 
 import project_linux
+import project_xen
 PROJECT_TYPES = [
     project_linux.ProjectLinux,
+    project_xen.ProjectXen,
     Project,
 ]
 
