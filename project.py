@@ -84,8 +84,8 @@ class Project:
         buildscript = workdir / "temp" / "run.do_deploy"
 
         if not buildscript.exists():
-            logger.error("deploy script %s does not exist", buildscript)
-            return False
+            logger.warning("deploy script %s does not exist", buildscript)
+            return True
 
         return shell.run_cmd(f"{buildscript}")
 
