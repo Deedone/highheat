@@ -18,6 +18,8 @@ HH does not check any dependencies, nor does it create images from scratch or to
 - [ ] Make non-standard projects moulin-aware(?)
 - [ ] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
+- [ ] Compile commands generation
+- [ ] Local image editing
 
 # Installation
 Symlink main.py to somewhere in your PATH, and make it executable.

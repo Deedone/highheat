@@ -23,11 +23,11 @@ class Project:
     img:image.Image|None = None
 
     def __init__(self, yoctobuilddir:Path, name:str):
-        workdir = yocto.get_project_workdir(yoctobuilddir, name)
+        workdir = self.find_workdir(yoctobuilddir, name)
         if not workdir:
             return
 
-        srcdir = yocto.get_project_srcdir(yoctobuilddir, name)
+        srcdir = self.find_srcdir(yoctobuilddir, name)
         if not srcdir:
             return
 
@@ -38,6 +38,12 @@ class Project:
 
         logger.debug("Initialized project %s in %s %s", name, workdir, srcdir)
 
+
+    def find_workdir(self, yoctobuilddir:Path, name:str) -> Path|None:
+        return yocto.get_project_workdir(yoctobuilddir, name)
+
+    def find_srcdir(self, yoctobuilddir:Path, name:str) -> Path|None:
+        return yocto.get_project_srcdir(yoctobuilddir, name)
 
     def edit(self) -> None:
         logger.debug("edit %s", self.projname)
@@ -147,6 +153,9 @@ class Project:
 
         logger.info("%s: Deploy successful", self.projname)
 
+        self.cleanup()
+
+    def cleanup(self):
         if self.img:
             self.img.umount()
 
@@ -157,8 +166,10 @@ class Project:
         return True
 
 
+import project_linux
 PROJECT_TYPES = [
-    Project
+    project_linux.ProjectLinux,
+    Project,
 ]
 
 

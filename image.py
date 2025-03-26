@@ -21,7 +21,8 @@ class Image:
 
     @staticmethod
     def can_handle(path:Path) -> bool:
-        return path.is_dir()
+        # Check for parent in case of installing as a new file
+        return path.is_dir() or path.parent.is_dir()
 
 
 import image_ext4

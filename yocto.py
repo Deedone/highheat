@@ -37,3 +37,16 @@ def get_project_srcdir(builddir: Path, project: str) -> Path | None:
         return None
 
     return gitdir
+
+def get_kernel_srcdir(builddir: Path) -> Path|None:
+    work_shared = builddir / "tmp/work-shared"
+    if not work_shared.exists():
+        logger.error("Work-shared doesn't exist")
+        return None
+
+    for subdir in work_shared.iterdir():
+        kernel_source = subdir / "kernel-source"
+        if kernel_source.exists():
+            return kernel_source
+
+    return None
