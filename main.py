@@ -43,6 +43,11 @@ def guess_project() -> str | None:
 def process_args() -> argparse.Namespace:
     epilog = """Examples:
 
+    If target is an image, you can specify additional subpath to be used
+    inside the unpacked image.
+    Example:
+        hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+
     Edit xen from DomD:
         hh edit domd xen
 
@@ -104,7 +109,7 @@ def main():
 
     if args.dryrun:
         conf.dryrun = True
-        
+
     if args.noconfirm:
         conf.confirmcmd = False
 

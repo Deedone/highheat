@@ -109,8 +109,15 @@ class Project:
 
         logger.info("%s: Build successful", self.projname)
         return True
+    def check_subtarget(self, target: str) -> tuple[str, str|None]:
+        parts = target.split(",", 1)
+        if len(parts) != 2:
+            return target, None
+        actual_target, subpath = parts
+        return actual_target, subpath
 
-    def preare_target(self, target:str) -> Path|None:
+    def prepare_target(self, target:str) -> Path|None:
+        target, subpath = self.check_subtarget(target)
         self.tran = transport.find_transport(target)
         if not self.tran:
             logger.error("Transport not found")
@@ -129,6 +136,12 @@ class Project:
             return None
 
         mounted = self.img.mount()
+        if mounted and subpath:
+            if subpath.startswith("/"):
+                subpath = subpath[1:]
+            logger.info("Using subpath %s", subpath)
+            mounted = mounted / subpath
+
         if not mounted:
             logger.error("Mount failed")
             del self.tran
@@ -148,7 +161,7 @@ class Project:
             logger.error("Image not found")
             return
 
-        mounted = self.preare_target(target)
+        mounted = self.prepare_target(target)
 
         if not mounted:
             logger.error("Prepare target failed")

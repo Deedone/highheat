@@ -32,7 +32,7 @@ class ProjectLinux(project.Project):
         image = deploydir / "Image"
         if not image.exists():
             logger.error("Image %s not found", image)
-        mounted = self.preare_target(target)
+        mounted = self.prepare_target(target)
 
         if not mounted:
             logger.error("Prepare target failed")
@@ -91,7 +91,7 @@ class ProjectLinux(project.Project):
             logger.error("No valid image selected")
             return
 
-        mounted = self.preare_target(target)
+        mounted = self.prepare_target(target)
         if not mounted:
             logger.error("Prepare target failed")
             return

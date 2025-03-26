@@ -17,7 +17,7 @@ HH does not check any dependencies, nor does it create images from scratch or to
 - [ ] Add support for non-standard projects (xen, linux)
 - [ ] Try to get rid of sudo
 - [ ] Make non-standard projects moulin-aware(?)
-- [ ] Advanced deploy targets (subfolders inside images)
+- [x] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
 - [ ] Compile commands generation
 - [ ] Local image editing
@@ -50,6 +50,10 @@ options:
   --noconfirm, -y       Do not confirm commands
 
 Examples:
+    If target is an image, you can specify additional subpath to be used
+    inside the unpacked image.
+    Example:
+        hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
 
     Edit xen from DomD:
         hh edit domd xen
