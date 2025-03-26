@@ -43,7 +43,15 @@ class Project:
         return yocto.get_project_workdir(yoctobuilddir, name)
 
     def find_srcdir(self, yoctobuilddir:Path, name:str) -> Path|None:
-        return yocto.get_project_srcdir(yoctobuilddir, name)
+        gitdir = yocto.get_project_gitdir(yoctobuilddir, name)
+        if gitdir:
+            return gitdir
+        guessdir = yocto.get_project_nongit_srcdir(yoctobuilddir, name)
+        if not guessdir:
+            logger.error("No source directory found for %s", name)
+            return None
+        return guessdir
+
 
     def edit(self) -> None:
         logger.debug("edit %s", self.projname)
