@@ -22,5 +22,5 @@ def run_cmd(command: str) -> bool:
         result = subprocess.run(command, shell=True, check=True, stdin=sys.stdin)
         return result.returncode == 0
     except subprocess.CalledProcessError as e:
-        logger.error("Command '%s' failed with error: %s", command, e.stderr.decode('utf-8'))
+        logger.error("Command '%s' failed with error: %d", command, e.returncode)
         return False
