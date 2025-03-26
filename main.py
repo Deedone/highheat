@@ -9,6 +9,9 @@ from pathlib import Path
 from project import find_project
 import time
 
+#TODO: Use some magic-processing library to better determine file types
+#TODO: Better config docs
+#TODO: Adequate installation as python package
 
 def get_yoctobuilddir(domain:str|None) -> Path | None:
     if domain:
@@ -28,7 +31,7 @@ def get_yoctobuilddir(domain:str|None) -> Path | None:
         builddir = yocto.find_yocto_root()
         return builddir
 
-
+#TODO: Deal with kernel-source
 def guess_project() -> str | None:
     cwd = Path.cwd()
 
@@ -41,12 +44,19 @@ def guess_project() -> str | None:
 
 
 def process_args() -> argparse.Namespace:
-    epilog = """Examples:
+    epilog = """
 
-    If target is an image, you can specify additional subpath to be used
-    inside the unpacked image.
-    Example:
-        hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+If target is an image, you can specify additional subpath to be used
+inside the unpacked image.
+Example:
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+
+Linux project handles both Kernel image and DTB files, depending on target path.
+Example:
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/file.dtb
+
+Other examples:
 
     Edit xen from DomD:
         hh edit domd xen

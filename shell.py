@@ -9,12 +9,10 @@ def log_cmd(command: str) -> None:
     logger.info("Running command:%s %s",log.RESET, command)
 
 def run_cmd(command: str) -> bool:
-    if config.conf.confirmcmd:
-        log_cmd(command)
+    log_cmd(command)
+    if config.conf.confirmcmd and not config.conf.dryrun:
         if not input("Continue? [y/N]: ").lower() in 'yY':
             return False
-    else:
-        log_cmd(command)
 
     if config.conf.dryrun:
         return True

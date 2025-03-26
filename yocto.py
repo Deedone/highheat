@@ -14,6 +14,7 @@ def find_yocto_root() -> Path | None:
     logger.error("yocto root not found")
     return None
 
+
 def get_project_workdir(builddir: Path, project: str) -> Path | None:
     workdir = builddir / "tmp/work"
     if not workdir.exists():
@@ -27,6 +28,7 @@ def get_project_workdir(builddir: Path, project: str) -> Path | None:
                     return list(subsubdir.glob("*"))[0]
     return None
 
+
 def get_project_gitdir(builddir: Path, project: str) -> Path | None:
     base = get_project_workdir(builddir, project)
     if base is None:
@@ -37,6 +39,7 @@ def get_project_gitdir(builddir: Path, project: str) -> Path | None:
         return None
 
     return gitdir
+
 
 def get_project_nongit_srcdir(builddir: Path, project: str) -> Path | None:
     base = get_project_workdir(builddir, project)
@@ -54,6 +57,7 @@ def get_project_nongit_srcdir(builddir: Path, project: str) -> Path | None:
         logger.warn("Using the first one %s", candidates[0].name)
         time.sleep(5)
     return candidates[0]
+
 
 def get_kernel_srcdir(builddir: Path) -> Path|None:
     work_shared = builddir / "tmp/work-shared"

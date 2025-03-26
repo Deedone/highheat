@@ -2,9 +2,25 @@
 
 If you are in a hurry, baking with HighHeat is the way to go.
 
-HighHeat offers a swift alternative to BitBake for rapid iterative development. By bypassing the entire BitBake process, HighHeat directly builds the recipe in the work directory and deploys it to the existing image on the target, significantly reducing the time from code changes to execution. Additionally, HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin).
+HighHeat offers a fast alternative to BitBake for rapid iterative development. By bypassing the entire BitBake process, HighHeat directly builds the recipe in the work directory and deploys it to the existing image on the target, significantly reducing the time from code changes to execution. Additionally, HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin).
 
 HH does not check any dependencies, nor does it create images from scratch or touches bitbake metadata. You need to have the project built at least once with BitBake before using HighHeat.
+
+# Reasoning (rambling)
+
+Yocto is a very good tool, until you start developing with it. (c) padre
+
+My main problem with developing inside Yocto is that there is no good way to iterate on your changes. You basically have two options:
+You can either rebuild everything with bitbake, which takes an ungodly amount of time, or dive inside the "guts" of the workdir and try to do something faster by hand, which is very tedious and breaks you out of the development loop.
+
+For some time I managed to work around this by using a lot of bash scripts, but
+this approach is not very reliable or pleasant.
+
+So the time has come to create a better solution. Now, instead of finding the relevant workdir, running "compile, install, deploy" loop, downloading the relevant image from the target, unpacking/mounting it by hand, finding and copying the relevant files, and packing and uploading everything back to the target, you can just do this:
+
+`hh build-deploy project-name target-path`
+
+And HH will do all of that for you.
 
 # Roadmap
 - [x] Implement edit
@@ -14,9 +30,8 @@ HH does not check any dependencies, nor does it create images from scratch or to
 - [x] Implement confirmation before running any shell commands
 - [x] Add support for ramdisk images
 - [x] Add support for remote targets
-- [ ] Add support for non-standard projects (xen, linux)
+- [x] Add support for non-standard projects (xen, linux)
 - [ ] Try to get rid of sudo
-- [ ] Make non-standard projects moulin-aware(?)
 - [x] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
 - [ ] Compile commands generation
@@ -30,7 +45,7 @@ chmod +x /usr/local/bin/hh
 ~~~
 
 # Usage
-~~~
+~~~bash
 usage: hh [-h] [--verbose] [--dryrun] [--noconfirm] {edit,e,build,b,deploy,d,build-deploy,bd} ...
 
 HighHeat, a fast BitBake alternative
@@ -49,11 +64,17 @@ options:
   --dryrun, -n          Dry run
   --noconfirm, -y       Do not confirm commands
 
-Examples:
-    If target is an image, you can specify additional subpath to be used
-    inside the unpacked image.
-    Example:
-        hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+If target is an image, you can specify additional subpath to be used
+inside the unpacked image.
+Example:
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+
+Linux project handles both Kernel image and DTB files, depending on target path.
+Example:
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/linux
+    hh deploy linux host:/tftpdir/uInitrams,/path/to/file.dtb
+
+Other examples:
 
     Edit xen from DomD:
         hh edit domd xen

@@ -6,7 +6,6 @@ from typing import List
 import shell
 
 
-
 class ProjectLinux(project.Project):
 
     supported_names = [
@@ -47,6 +46,8 @@ class ProjectLinux(project.Project):
 
         self.cleanup()
 
+#TODO: Move file selection to a generic module
+#TODO: Add caching for selections (and some flag to bypass it)
     def select_source(self, sources: List[Path]) -> Path | None:
         if len(sources) == 1:
             return sources[0]

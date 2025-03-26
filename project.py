@@ -11,6 +11,8 @@ import shell
 #Naming
 #/home/x/work/prod_devel/yocto/build-domd/tmp/work/cortexa76-poky-linux/xen/4.20.0+gitAUTOINC+dcbbc89203-r0/git
 #            |moulindir       | yoctobuilddir                              |workdir                        |srcdir
+#TODO: Move copying to image/transport layers (may help minimize sudo)
+#TODO: Find some nice way to handle stuff like xenpolicy
 
 class Project:
 
@@ -80,6 +82,7 @@ class Project:
 
         return shell.run_cmd(f"{buildscript}")
 
+
     def run_deploy(self, workdir: Path) -> bool:
         buildscript = workdir / "temp" / "run.do_deploy"
 
@@ -109,6 +112,8 @@ class Project:
 
         logger.info("%s: Build successful", self.projname)
         return True
+
+
     def check_subtarget(self, target: str) -> tuple[str, str|None]:
         parts = target.split(",", 1)
         if len(parts) != 2:
@@ -116,6 +121,8 @@ class Project:
         actual_target, subpath = parts
         return actual_target, subpath
 
+
+#TODO: Move subpath handling to images
     def prepare_target(self, target:str) -> Path|None:
         target, subpath = self.check_subtarget(target)
         self.tran = transport.find_transport(target)
@@ -150,6 +157,7 @@ class Project:
 
         return mounted
 
+
     def find_image(self) -> Path|None:
         image = self.workdir / "image"
 
@@ -158,6 +166,7 @@ class Project:
             return None
 
         return image
+
 
     def deploy(self, target:str) -> None:
         logger.debug("deploy %s to %s", self.projname, target)
@@ -193,6 +202,8 @@ class Project:
 
         if self.tran:
             self.tran.upload()
+
+
     @staticmethod
     def can_handle(_target:str) -> bool:
         return True

@@ -26,12 +26,13 @@ def find_yaml_path() -> Path|None:
 #   domu:
 #     build-dir: "%{YOCTOS_WORK_DIR}"
 
+#TODO: Check in moulin if this is okay
 def process_variables(path: Path, yaml_data) -> Path:
-    
+
     variables = yaml_data['variables']
     if not variables:
         return path
-    
+
     strpath = str(path)
     for variable in variables:
         if variable in strpath:

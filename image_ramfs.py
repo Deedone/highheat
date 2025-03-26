@@ -34,6 +34,7 @@ class ImageRamfs(image.Image):
     def __init__(self, path:Path):
         super().__init__(path)
 
+
     def mount(self) -> Path|None:
         self.tempdir = tempfile.TemporaryDirectory(dir=Path.cwd())
         self.mount_point = Path(self.tempdir.name)
@@ -84,6 +85,7 @@ class ImageRamfs(image.Image):
         shell.run_cmd(f"sudo rm -rf {self.mount_point}")
         if self.tempdir:
             self.tempdir.cleanup()
+
 
     @staticmethod
     def can_handle(path:Path) -> bool:

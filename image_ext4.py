@@ -11,13 +11,16 @@ class ImageExt4(image.Image):
     tempdir:tempfile.TemporaryDirectory | None = None
     mounted:bool = False
 
+
     def __init__(self, path:Path):
         super().__init__(path)
+
 
     def __del__(self):
         self.umount()
         if self.tempdir:
             self.tempdir.cleanup()
+
 
     def mount(self) -> Path|None:
         self.tempdir = tempfile.TemporaryDirectory(dir=Path.cwd())
@@ -39,6 +42,7 @@ class ImageExt4(image.Image):
 
         if self.tempdir:
             self.tempdir.cleanup()
+
 
     @staticmethod
     def can_handle(path:Path) -> bool:

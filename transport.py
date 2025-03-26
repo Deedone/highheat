@@ -6,14 +6,18 @@ class Transport:
     target:str = ""
     name:str = "Local"
 
+
     def __init__(self, target:str):
         self.target = target
+
 
     def download(self) -> Path|None:
         return Path(self.target)
 
+
     def upload(self) -> bool:
         return True
+
 
     @staticmethod
     def can_handle(_target:str) -> bool:

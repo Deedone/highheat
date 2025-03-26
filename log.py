@@ -20,6 +20,7 @@ else:
     BOLD_RED = ''
     RESET = ''
 
+
 class ColoredFormatter(logging.Formatter):
     # Define color codes
     COLORS = {
@@ -47,6 +48,7 @@ def build_handlers(log_format: str) -> list:
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
     return [handler]
+
 
 logging.basicConfig(level=logging.INFO, handlers=build_handlers('T:%(relativeSeconds).2f [%(levelname)s] %(message)s'))
 logger = logging.getLogger("HighHeat")
