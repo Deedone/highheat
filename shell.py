@@ -15,7 +15,7 @@ def run_cmd(command: str) -> bool:
             return False
     else:
         log_cmd(command)
-    
+
     if config.conf.dryrun:
         return True
     try:

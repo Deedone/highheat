@@ -2,8 +2,9 @@
 
 If you are in a hurry, baking with HighHeat is the way to go.
 
-HighHeat is an alternative to bitbake for fast iterative development. To reduce the time from changing the code to running it on the target, HighHeat skips the whole bitbake process and builds the recipe directly in the workdir and deploys it to the existing image on the target.
-HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin)
+HighHeat offers a swift alternative to BitBake for rapid iterative development. By bypassing the entire BitBake process, HighHeat directly builds the recipe in the work directory and deploys it to the existing image on the target, significantly reducing the time from code changes to execution. Additionally, HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin).
+
+HH does not check any dependencies, nor does it create images from scratch or touches bitbake metadata. You need to have the project built at least once with BitBake before using HighHeat.
 
 # Roadmap
 - [x] Implement edit
@@ -15,7 +16,7 @@ HighHeat is compatible with [Moulin](https://github.com/xen-troops/moulin)
 - [x] Add support for remote targets
 - [ ] Add support for non-standard projects (xen, linux)
 - [ ] Make non-standard projects moulin-aware(?)
-- [ ] Advanced deploy target (subfolders inside images)
+- [ ] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
 
 # Installation
@@ -65,7 +66,7 @@ Edit opens the project source in the preferred editor.
 Build builds the project (runs the do_compile/install/deploy scripts).
 Deploy copies the built project to the target.
 
-Each command accepts the domain in the project name as an argument. Domain is only relevant for [Moulin](https://github.com/xen-troops/moulin) projects with multiple domains.
+Each command accepts the domain and the project name as arguments. Domain is only relevant for [Moulin](https://github.com/xen-troops/moulin) projects with multiple domains.
 For HH to be able to find the correct project, you need to run it from somewhere inside the yocto or moulin root directory.
 
 Targets for deploy:

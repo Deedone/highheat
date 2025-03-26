@@ -1,9 +1,6 @@
 from pathlib import Path
 from log import logger
 
-
-
-
 class Transport:
 
     target:str = ""

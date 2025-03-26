@@ -9,7 +9,7 @@ def find_yocto_root() -> Path | None:
         if localconf.exists():
             return start
         start = start.parent
-    
+
     logger.error("yocto root not found")
     return None
 
@@ -35,5 +35,5 @@ def get_project_srcdir(builddir: Path, project: str) -> Path | None:
     if not gitdir.exists():
         logger.error("gitdir %s does not exist", gitdir)
         return None
-    
+
     return gitdir

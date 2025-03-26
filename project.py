@@ -110,7 +110,7 @@ class Project:
 
         self.img = image.find_image(downloaded)
         if not self.img:
-            logger.error("Image not found")
+            logger.error("Can't determine image type for %s", downloaded)
             del self.tran
             return None
 
@@ -152,7 +152,6 @@ class Project:
 
         if self.tran:
             self.tran.upload()
-
     @staticmethod
     def can_handle(_target:str) -> bool:
         return True
@@ -161,6 +160,7 @@ class Project:
 PROJECT_TYPES = [
     Project
 ]
+
 
 def find_project(yoctobuilddir:Path, name:str) -> Project|None:
     for project_type in PROJECT_TYPES:
