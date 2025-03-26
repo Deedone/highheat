@@ -20,17 +20,21 @@ class TransportRemoteRsync(Transport):
     def download(self) -> Path|None:
 
         dldir = Path(config.conf.dldir)
+        target = dldir / Path(self.target).name
         if not dldir.exists():
             dldir.mkdir(parents=True)
 
-        
-        ret = shell.run_cmd(f"rsync -avhP --delete {self.host}:{self.target} {dldir}")
-        if not ret:
-            logger.error("Failed to download %s:%s", self.host, self.target)
-            return None
 
-        return dldir / Path(self.target).name
-        
+        ret = shell.run_cmd(f"rsync -avhzP --delete {self.host}:{self.target} {target}")
+        if not ret:
+            if target.exists() and target.is_dir():
+                logger.warn("Failed to download all files from %s:%s", self.host, self.target)
+            else:
+                logger.error("Failed to download %s:%s", self.host, self.target)
+                return None
+
+        return target
+
 
     def upload(self) -> bool:
         dldir = Path(config.conf.dldir)
@@ -42,7 +46,7 @@ class TransportRemoteRsync(Transport):
             return False
 
         if source.is_dir():
-            ret = shell.run_cmd(f"rsync -avhP {source}/ {self.host}:{self.target}")
+            ret = shell.run_cmd(f"rsync -avhP --no-owner --no-group --no-times {source}/ {self.host}:{self.target}")
         else:
             ret = shell.run_cmd(f"rsync -avhP {source} {self.host}:{self.target}")
 
