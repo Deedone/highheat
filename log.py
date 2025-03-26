@@ -33,6 +33,7 @@ class ColoredFormatter(logging.Formatter):
 
     def format(self, record):
         log_color = self.COLORS.get(record.levelname, self.RST)
+        record.relativeSeconds = record.relativeCreated / 1000
         message = super().format(record)
 
         if sys.stderr.isatty():
@@ -47,6 +48,6 @@ def build_handlers(log_format: str) -> list:
     handler.setFormatter(formatter)
     return [handler]
 
-logging.basicConfig(level=logging.INFO, handlers=build_handlers('%(asctime)s [%(levelname)s] %(message)s'))
+logging.basicConfig(level=logging.INFO, handlers=build_handlers('T:%(relativeSeconds).2f [%(levelname)s] %(message)s'))
 logger = logging.getLogger("HighHeat")
 logging.debug("Logger initialized")
