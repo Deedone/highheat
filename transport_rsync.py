@@ -35,17 +35,21 @@ class TransportRemoteRsync(Transport):
     def upload(self) -> bool:
         dldir = Path(config.conf.dldir)
         target_name = Path(self.target).name
+        source = dldir / target_name
 
         if not dldir.exists():
             logger.error("Download directory %s does not exist", dldir)
             return False
 
-        ret = shell.run_cmd(f"rsync -avhP {dldir / target_name} {self.host}:{self.target}")
+        if source.is_dir():
+            ret = shell.run_cmd(f"rsync -avhP {source}/ {self.host}:{self.target}")
+        else:
+            ret = shell.run_cmd(f"rsync -avhP {source} {self.host}:{self.target}")
 
         if not ret:
             logger.error("Failed to upload %s:%s", self.host, self.target)
             return False
-        
+
         return True
 
 
