@@ -80,6 +80,8 @@ class ImageRamfs(image.Image):
             return None
 
         shell.run_cmd(f"rm {cpio}")
+        # Cleanup files inside the unpacked folder so it can be deleted by tempdir
+        shell.run_cmd(f"sudo rm -rf {self.mount_point}")
         if self.tempdir:
             self.tempdir.cleanup()
 

@@ -15,6 +15,7 @@ HH does not check any dependencies, nor does it create images from scratch or to
 - [x] Add support for ramdisk images
 - [x] Add support for remote targets
 - [ ] Add support for non-standard projects (xen, linux)
+- [ ] Try to get rid of sudo
 - [ ] Make non-standard projects moulin-aware(?)
 - [ ] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
