@@ -28,7 +28,7 @@ def get_yoctobuilddir(domain:str|None) -> Path | None:
 
         return build_dirs[domain]
     else:
-        builddir = yocto.find_yocto_root()
+        builddir = yocto.find_yocto_root(Path.cwd())
         return builddir
 
 #TODO: Deal with kernel-source

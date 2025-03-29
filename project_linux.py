@@ -14,17 +14,14 @@ class ProjectLinux(project.Project):
     ]
     name:str = "Linux"
 
-    def find_srcdir(self, yoctobuilddir:Path, name:str) -> Path|None:
-        return yocto.get_kernel_srcdir(yoctobuilddir)
-
     def deploy_image(self, target:str) -> None:
         logger.debug("deploy %s to %s", self.projname, target)
         if not self.initialized:
             return
 
-        deploydir = self.workdir / f"deploy-{self.projname}"
+        deploydir = self.find_deploydir()
 
-        if not deploydir.exists():
+        if not deploydir or not deploydir.exists():
             logger.error("Deploy dir %s don't exist", deploydir)
             return
 
@@ -71,15 +68,14 @@ class ProjectLinux(project.Project):
         if not self.initialized:
             return
 
-        deploydir = self.workdir / f"deploy-{self.projname}"
+        deploydir = self.find_deploydir()
 
-        if not deploydir.exists():
+        if not deploydir or not deploydir.exists():
             logger.error("Deploy dir %s don't exist", deploydir)
             return
 
         sources = list(deploydir.glob("*.dtb"))
 
-        symlink_targets = []
         for p in sources:
             if p.is_symlink():
                 resolved = p.resolve()

@@ -18,6 +18,7 @@ class Project:
 
     workdir:Path = Path()
     srcdir:Path = Path()
+    yoctobuilddir:Path = Path()
     name:str = "Simple userspace"
     projname:str = ""
     initialized:bool = False
@@ -33,6 +34,7 @@ class Project:
         if not srcdir:
             return
 
+        self.yoctobuilddir = yoctobuilddir
         self.srcdir = srcdir
         self.workdir = workdir
         self.projname = name
@@ -45,15 +47,13 @@ class Project:
         return yocto.get_project_workdir(yoctobuilddir, name)
 
     def find_srcdir(self, yoctobuilddir:Path, name:str) -> Path|None:
-        gitdir = yocto.get_project_gitdir(yoctobuilddir, name)
-        if gitdir:
-            return gitdir
-        guessdir = yocto.get_project_nongit_srcdir(yoctobuilddir, name)
-        if not guessdir:
-            logger.error("No source directory found for %s", name)
-            return None
-        return guessdir
+        return yocto.get_project_srcdir(yoctobuilddir, name)
 
+    def find_image(self) -> Path|None:
+        return yocto.get_project_imagedir(self.yoctobuilddir, self.projname)
+    
+    def find_deploydir(self) -> Path|None:
+        return yocto.get_project_deploydir(self.yoctobuilddir, self.projname)
 
     def edit(self) -> None:
         logger.debug("edit %s", self.projname)
@@ -157,15 +157,6 @@ class Project:
 
         return mounted
 
-
-    def find_image(self) -> Path|None:
-        image = self.workdir / "image"
-
-        if not image.exists():
-            logger.error("Image not found")
-            return None
-
-        return image
 
 
     def deploy(self, target:str) -> None:
