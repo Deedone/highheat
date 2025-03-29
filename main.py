@@ -31,13 +31,15 @@ def get_yoctobuilddir(domain:str|None) -> Path | None:
         builddir = yocto.find_yocto_root(Path.cwd())
         return builddir
 
-#TODO: Deal with kernel-source
 def guess_project() -> str | None:
     cwd = Path.cwd()
 
     while cwd != Path('/'):
         if (cwd / 'temp/run.do_compile').exists():
             return cwd.parent.name
+        if cwd.name == "kernel-source":
+            return "virtual/kernel"
+            
         cwd = cwd.parent
 
     return None
