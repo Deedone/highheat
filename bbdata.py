@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from bbclient import BBClient
 from log import logger
@@ -103,6 +104,9 @@ class BBdata:
         logger.info("Launching BBClient to get project data for %s", project)
         logger.debug("bbclient = BBClient( %s %s %s", str(poky_path), "source oe-init-build-env ../"+str(relative_builddir), ")")
         bbclient = BBClient(str(poky_path), "source oe-init-build-env ../"+str(relative_builddir))
+        # Settings to prevent BB server from destroying workdirs that it deems obsolete
+        os.environ.update({"SSTATE_PRUNE_OBSOLETEWORKDIR": "0", "BB_ENV_PASSTHROUGH_ADDITIONS": "SSTATE_PRUNE_OBSOLETEWORKDIR"})
+        logger.debug("OS environment variables: %s", os.environ)
         bbclient.start_server()
         
         recipe = bbclient.find_best_provider(project)[-1]
