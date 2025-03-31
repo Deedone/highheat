@@ -13,8 +13,12 @@ class ProjectData:
     
     def __init__(self, sourcedir: str, imagedir: str, deploydir: str, workdir: str, recpie_path: str):
         self.sourcedir = Path(sourcedir)
-        self.imagedir = Path(imagedir)
-        self.deploydir = Path(deploydir)
+        self.imagedir = None
+        if imagedir is not None and imagedir != "None":
+            self.imagedir = Path(imagedir)
+        self.deploydir = None
+        if deploydir is not None and deploydir != "None":
+            self.deploydir = Path(deploydir)
         self.workdir = Path(workdir)
         self.recpie_path = Path(recpie_path)
     
