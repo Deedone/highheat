@@ -4,6 +4,7 @@ import moulin
 import yocto
 import config
 import sys
+import shell
 from log import logger, set_debug
 from pathlib import Path
 from project import find_project
@@ -163,6 +164,8 @@ def main():
             return
         proj.deploy(args.target)
 
+    shell.cleanup_dldir()
+    
     elapsed_time = time.time() - start
     formatted_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
     logger.info("Execution took: %s", formatted_time)
