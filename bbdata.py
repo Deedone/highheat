@@ -7,12 +7,13 @@ from log import logger
 
 class ProjectData:
     sourcedir: Path
-    imagedir: Path
-    deploydir: Path
+    imagedir: Path | None
+    deploydir: Path | None
     workdir: Path
     recpie_path: Path
+    srcrev: str
     
-    def __init__(self, sourcedir: str, imagedir: str, deploydir: str, workdir: str, recpie_path: str):
+    def __init__(self, sourcedir: str, imagedir: str | None, deploydir: str | None, workdir: str, recpie_path: str, srcrev: str = ""):
         self.sourcedir = Path(sourcedir)
         self.imagedir = None
         if imagedir is not None and imagedir != "None":
@@ -22,6 +23,7 @@ class ProjectData:
             self.deploydir = Path(deploydir)
         self.workdir = Path(workdir)
         self.recpie_path = Path(recpie_path)
+        self.srcrev = srcrev
     
     def to_json(self):
         return {
@@ -29,7 +31,8 @@ class ProjectData:
             'imagedir': str(self.imagedir),
             'deploydir': str(self.deploydir),
             'workdir': str(self.workdir),
-            'recpie_path': str(self.recpie_path)
+            'recpie_path': str(self.recpie_path),
+            'srcrev': self.srcrev
         }
     
     @classmethod
@@ -39,7 +42,8 @@ class ProjectData:
             data['imagedir'],
             data['deploydir'],
             data['workdir'],
-            data['recpie_path']
+            data['recpie_path'],
+            data['srcrev']
         )
         
 class BBdata:
@@ -75,15 +79,21 @@ class BBdata:
         self.save()
         
     def check_entry(self, key:str) -> bool:
+        logger.debug("Checking entry %s", key)
         if key not in self.data:
             return False
             
         if not self.data[key].sourcedir.exists():
             return False
-        if not self.data[key].imagedir.exists():
-            return False
-        if not self.data[key].deploydir.exists():
-            return False
+        imagedir = self.data[key].imagedir
+        if imagedir is not None:
+            if not imagedir.exists():
+                return False
+        
+        deploydir = self.data[key].deploydir
+        if deploydir is not None:
+            if not deploydir.exists():
+                return False
         if not self.data[key].workdir.exists():
             return False
         if not self.data[key].recpie_path.exists():
@@ -121,6 +131,8 @@ class BBdata:
         imagedir = bbclient.data_store_connector_cmd(idx, "getVar", "D")
         deploydir = bbclient.data_store_connector_cmd(idx, "getVar", "DEPLOYDIR")
         workdir = bbclient.data_store_connector_cmd(idx, "getVar", "WORKDIR")
+        srcrev = bbclient.data_store_connector_cmd(idx, "getVar", "SRCREV")
+        
         bbclient.stop_server()
         logger.debug("Loaded S:%s \nI:%s \nD:%s \nW:%s\n from %s", sourcedir, imagedir, deploydir, workdir, recipe)
         
@@ -128,16 +140,14 @@ class BBdata:
             logger.error("sourcedir not found")
             return False
         if not imagedir:
-            logger.error("imagedir not found")
-            return False
+            logger.warning("imagedir not found")
         if not deploydir:
-            logger.error("deploydir not found")
-            return False
+            logger.warning("deploydir not found")
         if not workdir:
             logger.error("workdir not found")
             return False
         
-        proj_data = ProjectData(sourcedir, imagedir, deploydir, workdir, recipe)
+        proj_data = ProjectData(sourcedir, imagedir, deploydir, workdir, recipe, srcrev)
         
         self.append(project, proj_data)
         return True
