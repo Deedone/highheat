@@ -2,6 +2,7 @@ from log import logger
 from pathlib import Path
 from bbdata import BBdata
 
+# TODO: refactor to not load json for every call
 def find_yocto_root(start: Path) -> Path | None:
     while start != Path('/'):
         localconf = start / "conf" / "local.conf"
@@ -68,3 +69,10 @@ def get_project_deploydir(builddir: Path, project: str) -> Path | None:
         return None
             
     return bbdata.data[project].deploydir
+
+def get_project_srcrev(builddir: Path, project: str) -> str | None:
+    bbdata = _load_bbdata(builddir, project)
+    if not bbdata:
+        return None
+            
+    return bbdata.data[project].srcrev

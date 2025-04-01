@@ -164,6 +164,8 @@ def main():
             return
         proj.deploy(args.target)
 
+    if yocto.get_project_srcrev(yoctobuilddir, args.project) == "AUTOINC":
+        logger.warning("%s uses ${AUTOREV}, make sure to backup your changes before running bitbake", args.project)
     shell.cleanup_dldir()
     
     elapsed_time = time.time() - start
