@@ -6,11 +6,13 @@ from typing import List
 import shell
 
 
+#TODO: Convert to find_image, leave default deploy impl
 class ProjectLinux(project.Project):
 
     supported_names = [
         "linux-renesas",
         "linux",
+        "virtual/kernel"
     ]
     name:str = "Linux"
 
