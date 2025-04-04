@@ -72,6 +72,7 @@ def run_cmd(command: str) -> bool:
         return False
 
 def try_delete(p:Path):
+    logger.debug("p exists %d p is_dir %d", p.exists(), p.is_dir())
     try:
         if p.is_dir():
             shutil.rmtree(p)
@@ -91,4 +92,4 @@ def cleanup_dldir():
         if file.exists():
             age = now - datetime.fromtimestamp(file.stat().st_mtime)
             if age > config.conf.dldir_cleanup_interval:
-                file.unlink()
+                try_delete(file)

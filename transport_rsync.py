@@ -18,8 +18,6 @@ class TransportRemoteRsync(Transport):
         self.host, self.target = target.split(":")
 
     def download(self) -> Path|None:
-
-#TODO: Some form of authomatic dldir cleanup
         dldir = Path(config.conf.dldir)
         target = dldir / Path(self.target).name
         if not dldir.exists():
