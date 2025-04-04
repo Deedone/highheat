@@ -9,6 +9,10 @@ from datetime import datetime
 import shutil
 import halo
 import halo.cursor as cursor
+import pty
+import os
+import select
+import fcntl
 
 
 def log_cmd(command: str) -> None:
@@ -31,18 +35,39 @@ def trim_left(string: str, length: int) -> str:
     else:
         return "..." + string[-(length-3):]
 
-def status_logs(proc, cmdline:str):
+def direct_logs(cmdlin:str, master:int):
+    while True:
+        ready, _, _ = select.select([master], [], [], 0.1)
+        if master in ready:
+            try:
+                data = os.read(master, 1024).decode('utf-8')
+            except OSError:
+                break
+            print(data,end="")
+    
+
+def status_logs(cmdline:str, master:int):
     terminal_width = shutil.get_terminal_size().columns
     filler = " " * terminal_width
     cursor.hide()
     h = halo.Halo(text=trim_left(cmdline, terminal_width - 5), spinner="dots")
     spinnertext = h.frame()
-    for line in iter(proc.stdout.readline, ''):
-        if is_new_frame(0.1):
-            spinnertext = h.frame()
-        print(filler + "\r", end="") # Clear previous spinner line
-        print(line,end="") 
-        print(spinnertext + "\r", end="")
+    end = ""
+    while True:
+        ready, _, _ = select.select([master], [], [], 0.1)
+        if master in ready:
+            try:
+                data = os.read(master, 1024).decode('utf-8')
+            except OSError:
+                break
+            if is_new_frame(0.1):
+                spinnertext = h.frame()
+            print(filler + "\r", end="") # Clear previous spinner line
+            if end == "\n":
+                print("\033[A", end="")
+            end = "" if data.endswith("\n") else "\n"
+            print(data,end=end)
+            print(spinnertext + "\r", end="")
         
     cursor.show()
     spinnertext = h.frame()
@@ -59,13 +84,17 @@ def run_cmd(command: str) -> bool:
     if config.conf.dryrun:
         return True
     try:
-        result = subprocess.Popen(command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        master, slave = pty.openpty()
+        result = subprocess.Popen(command, shell=True, text=True, stdout=slave, stderr=slave, bufsize=0)
+        os.close(slave)
+        flags = fcntl.fcntl(master, fcntl.F_GETFL)
+        fcntl.fcntl(master, fcntl.F_SETFL, flags | os.O_NONBLOCK)
         
-        status_logs(result, command)
+        if sys.stdout.isatty():
+            status_logs(command, master)
+        else:
+            direct_logs(command, master)
         
-        for line in iter(result.stderr.readline, ''):
-            print(line,end="")
-            
         return result.wait() == 0
     except subprocess.CalledProcessError as e:
         logger.error("Command '%s' failed with error: %d", command, e.returncode)
