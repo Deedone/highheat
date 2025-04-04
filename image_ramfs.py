@@ -30,6 +30,7 @@ class ImageRamfs(image.Image):
     name:str = "ramfs"
     mount_point:Path = Path()
     tempdir:tempfile.TemporaryDirectory | None = None
+    mountable = True
 
     def __init__(self, path:Path):
         super().__init__(path)
@@ -81,12 +82,10 @@ class ImageRamfs(image.Image):
             return None
 
         shell.run_cmd(f"rm {cpio}")
-        # Cleanup files inside the unpacked folder so it can be deleted by tempdir
-        shell.run_cmd(f"sudo rm -rf {self.mount_point}")
         if self.tempdir:
             self.tempdir.cleanup()
 
 
     @staticmethod
-    def can_handle(path:Path) -> bool:
-        return path.name == "uInitramfs"
+    def can_handle(path:str) -> bool:
+        return path.endswith("uInitramfs")

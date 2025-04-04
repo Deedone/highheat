@@ -23,7 +23,7 @@ class Project:
     projname:str = ""
     initialized:bool = False
     tran:transport.Transport|None = None
-    img:image.Image|None = None
+    img:image.Image
 
     def __init__(self, yoctobuilddir:Path, name:str):
         workdir = self.find_workdir(yoctobuilddir, name)
@@ -119,6 +119,8 @@ class Project:
         if len(parts) != 2:
             return target, None
         actual_target, subpath = parts
+        if subpath.startswith("/"):
+            subpath = subpath[1:]
         return actual_target, subpath
 
 
@@ -136,16 +138,15 @@ class Project:
             del self.tran
             return None
 
-        self.img = image.find_image(downloaded)
-        if not self.img:
+        img = image.find_image(downloaded)
+        if not img:
             logger.error("Can't determine image type for %s", downloaded)
             del self.tran
             return None
+        self.img = img
 
         mounted = self.img.mount()
         if mounted and subpath:
-            if subpath.startswith("/"):
-                subpath = subpath[1:]
             logger.info("Using subpath %s", subpath)
             mounted = mounted / subpath
 
@@ -158,14 +159,37 @@ class Project:
         return mounted
 
 
+    def deploy_fast(self, target:str) -> None:
+        logger.debug("fast track deploy")
+        target, subpath = self.check_subtarget(target)
+        if subpath:
+            logger.error("Subpath are not supported for direct image types")
+            return
+            
+        image_path = self.find_image()
+        
+        if not image_path:
+            logger.error("Unable to found project image directory")
+            return
+            
+        self.tran = transport.find_transport(target)
+        if not self.tran:
+            logger.error("Transport not found")
+            return None
+            
+        self.tran.install(image_path, target)
 
     def deploy(self, target:str) -> None:
+        if not image.needs_mount(target):
+            return self.deploy_fast(target)
+            
         logger.debug("deploy %s to %s", self.projname, target)
         if not self.initialized:
             return
 
-        image = self.find_image()
-        if not image:
+        image_path = self.find_image()
+        if not image_path:
+            logger.error("Unable to found project image directory")
             return
 
         mounted = self.prepare_target(target)
@@ -174,10 +198,7 @@ class Project:
             logger.error("Prepare target failed")
             return
 
-        if image.is_dir():
-            ret = shell.run_cmd(f"sudo cp -r {image}/* {mounted}")
-        else:
-            ret = shell.run_cmd(f"sudo cp {image} {mounted}")
+        ret = self.img.install(image_path, mounted)
 
         if not ret:
             logger.error("Copy failed")

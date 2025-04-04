@@ -10,6 +10,7 @@ class ImageExt4(image.Image):
     mount_point:Path = Path()
     tempdir:tempfile.TemporaryDirectory | None = None
     mounted:bool = False
+    mountable = True
 
 
     def __init__(self, path:Path):
@@ -34,6 +35,12 @@ class ImageExt4(image.Image):
         self.mounted = True
         return self.mount_point
 
+    def install(self, src:Path, dst:Path) -> bool:
+        if src.is_dir():
+            ret = shell.run_cmd(f"sudo cp -r {src}/* {dst}")
+        else:
+            ret = shell.run_cmd(f"sudo cp {src} {dst}")
+        return ret
 
     def umount(self) -> None:
         if self.mounted:
@@ -45,5 +52,5 @@ class ImageExt4(image.Image):
 
 
     @staticmethod
-    def can_handle(path:Path) -> bool:
-        return path.suffix == ".ext4"
+    def can_handle(path:str) -> bool:
+        return path.endswith(".ext4")

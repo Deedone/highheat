@@ -54,7 +54,20 @@ class TransportRemoteRsync(Transport):
             return False
 
         return True
+        
+    
+    def install(self, src:Path, dst:str) -> bool:
+        if src.is_symlink():
+            src = src.resolve()
+            
+        if src.is_dir():
+            ret = shell.run_cmd(f"rsync -avhP --no-owner --no-group --no-times {src}/ {dst}")
+        else:
+            ret = shell.run_cmd(f"rsync -avhP {src} {dst}")
 
+        if not ret:
+            logger.error("Failed to upload %s:%s", self.host, self.target)
+        return ret
 
     @staticmethod
     def can_handle(target:str) -> bool:

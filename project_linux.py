@@ -36,7 +36,7 @@ class ProjectLinux(project.Project):
             logger.error("Prepare target failed")
             return
 
-        ret = shell.run_cmd(f"sudo cp {image} {mounted}")
+        ret = self.img.install(image, mounted)
         if not ret:
             logger.error("Copy failed")
             return
@@ -95,7 +95,7 @@ class ProjectLinux(project.Project):
             logger.error("Prepare target failed")
             return
 
-        ret = shell.run_cmd(f"sudo cp {image} {mounted}")
+        ret = self.img.install(image, mounted)
         if not ret:
             logger.error("Copy failed")
             return

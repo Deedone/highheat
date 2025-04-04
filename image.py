@@ -52,3 +52,4 @@ def needs_mount(target: str) -> bool:
         if image_type.can_handle(target):
             logger.debug("needs_mount: %d from image %s", image_type.mountable, image_type.name)
             return image_type.mountable
+    return False
