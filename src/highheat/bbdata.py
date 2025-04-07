@@ -2,7 +2,8 @@ import json
 import os
 from pathlib import Path
 from bbclient import BBClient
-from log import logger
+
+from highheat.log import logger
 
 
 class ProjectData:

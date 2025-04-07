@@ -1,6 +1,7 @@
 from pathlib import Path
-from log import logger
-import shell
+
+from highheat.log import logger
+from highheat import shell
 
 
 # Base image is just a path to a directory
@@ -32,8 +33,8 @@ class Image:
         return True
 
 
-import image_ext4
-import image_ramfs
+from highheat import image_ext4
+from highheat import image_ramfs
 IMAGE_TYPES = [
     image_ext4.ImageExt4,
     image_ramfs.ImageRamfs,

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling", "packaging>=23.1"]
+build-backend = "hatchling.build"
+
+[project]
+name = "HighHeat"
+version = "1.0"
+authors = [{ name = "Deedone", email = "john.doe@example.com" }]
+description = "A fast BitBake alternative"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+dependencies = ["pyyaml", "bbclient", "halo"]
+
+[project.license]
+text = "MIT"
+
+[project.scripts]
+hh = "highheat.main:main"
+
+[project.urls]
+Homepage = "https://github.com/deedone/highheat"

@@ -1,12 +1,11 @@
-import yocto
-import config
-import transport
-import image
-from log import logger
-
 from pathlib import Path
-import shell
 
+from highheat import yocto
+from highheat import shell
+from highheat import config
+from highheat import transport
+from highheat import image
+from highheat.log import logger
 
 #Naming
 #/home/x/work/prod_devel/yocto/build-domd/tmp/work/cortexa76-poky-linux/xen/4.20.0+gitAUTOINC+dcbbc89203-r0/git
@@ -221,8 +220,8 @@ class Project:
         return True
 
 
-import project_linux
-import project_xen
+from highheat import project_linux
+from highheat import project_xen
 PROJECT_TYPES = [
     project_linux.ProjectLinux,
     project_xen.ProjectXen,

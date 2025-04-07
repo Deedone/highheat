@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import List, Dict
-from log import logger
+from typing import Dict
 import yaml
+
+from highheat.log import logger
 
 
 def find_yaml_path() -> Path|None:

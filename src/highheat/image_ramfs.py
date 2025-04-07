@@ -1,8 +1,9 @@
-import image
 from pathlib import Path
-import shell
 import tempfile
-from log import logger
+
+from highheat import image
+from highheat import shell
+from highheat.log import logger
 
 # unpack() {
 #     rm -rf ramfs

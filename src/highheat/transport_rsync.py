@@ -1,8 +1,9 @@
 from pathlib import Path
-from log import logger
-from transport import Transport
-import shell
-import config
+
+from highheat import shell
+from highheat import config
+from highheat.log import logger
+from highheat.transport import Transport
 
 
 

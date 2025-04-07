@@ -1,8 +1,9 @@
 from typing import List
 import os
 import yaml
-from log import logger
 from datetime import timedelta
+
+from highheat.log import logger
 
 CONFIG_PATHS:List[str] = [
     os.path.join(os.getenv('XDG_CONFIG_HOME', os.path.expanduser('~/.config')), 'highheat.yaml'),

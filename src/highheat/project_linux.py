@@ -1,9 +1,8 @@
-import project
-import yocto
 from pathlib import Path
-from log import logger
 from typing import List
-import shell
+
+from highheat.log import logger
+from highheat import project
 
 
 #TODO: Convert to find_image, leave default deploy impl

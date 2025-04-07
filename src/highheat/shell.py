@@ -1,6 +1,3 @@
-from log import logger
-import log
-import config
 import sys
 import subprocess
 import time
@@ -14,6 +11,9 @@ import os
 import select
 import fcntl
 
+from highheat import log
+from highheat.log import logger
+from highheat import config
 
 def log_cmd(command: str) -> None:
     logger.info("Running command:%s %s",log.RESET, command)
@@ -78,7 +78,7 @@ def status_logs(cmdline:str, master:int):
 def run_cmd(command: str) -> bool:
     log_cmd(command)
     if config.conf.confirmcmd and not config.conf.dryrun:
-        if not input("Continue? [y/N]: ").lower() in 'yY':
+        if input("Continue? [y/N]: ").lower() not in 'yY':
             return False
 
     if config.conf.dryrun:

@@ -31,17 +31,17 @@ And HH will do all of that for you.
 - [x] Add support for ramdisk images
 - [x] Add support for remote targets
 - [x] Add support for non-standard projects (xen, linux)
-- [ ] Try to get rid of sudo
+- [x] Try to get rid of sudo
 - [x] Advanced deploy targets (subfolders inside images)
 - [ ] Option to do remote via sshfs
 - [ ] Compile commands generation
 - [ ] Local image editing
 
 # Installation
-Symlink main.py to somewhere in your PATH, and make it executable.
+Install with `pip`
+
 ~~~bash
-ln -s /path/to/highheat/main.py /usr/local/bin/hh
-chmod +x /usr/local/bin/hh
+pip3 install --user git+https://github.com/deedone/highheat
 ~~~
 
 # Usage
@@ -81,12 +81,16 @@ Other examples:
 
     Build xen-tools current yocto project:
         hh build xen-tools
+        
+    Autodetect and build the project (based on the current directory)
+        hh build
 
     Deploy xen-tools to /srv/tftp:
         hh deploy xen-tools somehost:/srv/tftp
 
     Deploy qemu to domd-rootfs.ext4:
         hh deploy qemu /path/to/domd-rootfs.ext
+        
 ~~~
 
 The three main actions are edit, build and deploy.
@@ -112,7 +116,8 @@ $HOME/.config/highheat.yaml
 
 Sample configuration:
 ~~~yaml
-editor: nvim # Preferred editor
-confirm: true # Confirm before running shell commands
-dl_dir: /path/to/downloads # Persistent downloads directory
+editor: vim # Preferred editor
+confirm: True # Confirm before running shell commands
+dl_dir: ~/.cache/highheat # Persistent downloads directory
+dldir_cleanup_interval: 7 # Days between cleanup of old downloads
 ~~~

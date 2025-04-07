@@ -1,9 +1,8 @@
-import project
-import yocto
 from pathlib import Path
-from log import logger
-from typing import List
-import shell
+
+
+from highheat import project
+from highheat.log import logger
 
 
 class ProjectXen(project.Project):

@@ -1,6 +1,7 @@
 from pathlib import Path
-from log import logger
-import shell
+
+from highheat import shell
+from highheat.log import logger
 
 class Transport:
 
@@ -32,7 +33,7 @@ class Transport:
         return True
 
 
-import transport_rsync
+from highheat import transport_rsync
 TRANSPORT_TYPES = [
     transport_rsync.TransportRemoteRsync,
     Transport

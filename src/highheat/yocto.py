@@ -1,6 +1,7 @@
-from log import logger
 from pathlib import Path
-from bbdata import BBdata
+
+from highheat.log import logger
+from highheat.bbdata import BBdata
 
 # TODO: refactor to not load json for every call
 def find_yocto_root(start: Path) -> Path | None:

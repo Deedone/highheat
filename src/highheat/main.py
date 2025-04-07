@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 import argparse
-import moulin
-import yocto
-import config
 import sys
-import shell
-from log import logger, set_debug
-from pathlib import Path
-from project import find_project
 import time
+from pathlib import Path
+
+from highheat import moulin_helpers as moulin
+from highheat import yocto
+from highheat import config
+from highheat import shell
+from highheat.log import logger, set_debug
+from highheat.project import find_project
 
 #TODO: Use some magic-processing library to better determine file types
 #TODO: Better config docs
@@ -67,12 +68,14 @@ Other examples:
     Build xen-tools current yocto project:
         hh build xen-tools
 
+    Autodetect and build the project (based on the current directory)
+        hh build
+
     Deploy xen-tools to /srv/tftp:
         hh deploy xen-tools somehost:/srv/tftp
 
     Deploy qemu to domd-rootfs.ext4:
         hh deploy qemu /path/to/domd-rootfs.ext
-
 """
 
     parser = argparse.ArgumentParser(description='HighHeat, a fast BitBake alternative', epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter)
