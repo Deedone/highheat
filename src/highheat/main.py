@@ -175,4 +175,5 @@ def main():
     formatted_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
     logger.info("Execution took: %s", formatted_time)
 
-main()
+if __name__ == "__main__":
+    main()
