@@ -207,6 +207,28 @@ class Project:
 
         self.cleanup()
 
+    def info(self) -> None:
+        logger.debug("info %s", self.projname)
+        if not self.initialized:
+            return
+
+        print("Project name:    ", self.projname)
+        print("Yocto build dir: ", self.yoctobuilddir)
+        print("Source dir:      ", self.srcdir)
+        print("Work dir:        ", self.workdir)
+
+        image_path = self.find_image()
+        if image_path:
+            print("Image dir:       ", image_path)
+
+        deploy_path = self.find_deploydir()
+        if deploy_path:
+            print("Deploy dir:      ", deploy_path)
+
+        logger.info("Recipe files:")
+        for recipe in yocto.get_project_recipes(self.yoctobuilddir, self.projname):
+            print("    ", recipe)
+
     def cleanup(self):
         if self.img:
             self.img.umount()

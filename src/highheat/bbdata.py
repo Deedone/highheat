@@ -5,6 +5,8 @@ from bbclient import BBClient
 
 from highheat.log import logger
 
+CURRENT_VERSION = 1
+#TODO: Figure out how to do this less badly
 
 class ProjectData:
     sourcedir: Path
@@ -13,8 +15,10 @@ class ProjectData:
     workdir: Path
     recpie_path: Path
     srcrev: str
+    recipes: list[str]
+    version: int
     
-    def __init__(self, sourcedir: str, imagedir: str | None, deploydir: str | None, workdir: str, recpie_path: str, srcrev: str = ""):
+    def __init__(self, sourcedir: str, imagedir: str | None, deploydir: str | None, workdir: str, recpie_path: str, srcrev: str = "", recipes: list[str] = [], version: int = CURRENT_VERSION):
         self.sourcedir = Path(sourcedir)
         self.imagedir = None
         if imagedir is not None and imagedir != "None":
@@ -25,6 +29,7 @@ class ProjectData:
         self.workdir = Path(workdir)
         self.recpie_path = Path(recpie_path)
         self.srcrev = srcrev
+        self.recipes = recipes
     
     def to_json(self):
         return {
@@ -33,7 +38,8 @@ class ProjectData:
             'deploydir': str(self.deploydir),
             'workdir': str(self.workdir),
             'recpie_path': str(self.recpie_path),
-            'srcrev': self.srcrev
+            'srcrev': self.srcrev,
+            'recipes': json.dumps(self.recipes)
         }
     
     @classmethod
@@ -44,11 +50,11 @@ class ProjectData:
             data['deploydir'],
             data['workdir'],
             data['recpie_path'],
-            data['srcrev']
+            data['srcrev'],
+            json.loads(data['recipes'])
         )
         
 class BBdata:
-    
     data: dict[str, ProjectData]
     saved_path: Path
     
@@ -60,19 +66,22 @@ class BBdata:
                 with open(self.saved_path, 'r') as f:
                     logger.debug("Loading data from %s", self.saved_path)
                     json_data = json.load(f)
+                    if 'version' not in json_data or json_data['version'] != str(CURRENT_VERSION):
+                        logger.warning("Data version mismatch, reinitializing")
+                        return
                     for key, value in json_data.items():
+                        if key == 'version':
+                            continue
                         self.data[key] = ProjectData.from_json(value)
-                    
-                    
-                    return
         except json.JSONDecodeError:
-            logger.warn("Failed to load data from %s, reinitializing", self.saved_path)
+            logger.warning("Failed to load data from %s, reinitializing", self.saved_path)
             
             
     def save(self):
         logger.debug("Saving data to %s", self.saved_path)
         with open(self.saved_path, 'w') as f:
-            json_data = {key: value.to_json() for key, value in self.data.items()}
+            json_data:dict[str, dict|str] = {key: value.to_json() for key, value in self.data.items()}
+            json_data['version'] = str(CURRENT_VERSION)
             json.dump(json_data, f, default=vars)
 
     def append(self, key: str, value: ProjectData):
@@ -133,9 +142,12 @@ class BBdata:
         deploydir = bbclient.data_store_connector_cmd(idx, "getVar", "DEPLOYDIR")
         workdir = bbclient.data_store_connector_cmd(idx, "getVar", "WORKDIR")
         srcrev = bbclient.data_store_connector_cmd(idx, "getVar", "SRCREV")
+        recipes = [recipe]
+        for append in bbclient.get_file_appends(recipe):
+            recipes.append(append)
         
         bbclient.stop_server()
-        logger.debug("Loaded S:%s \nI:%s \nD:%s \nW:%s\n from %s", sourcedir, imagedir, deploydir, workdir, recipe)
+        logger.debug("Loaded S:%s \nI:%s \nD:%s \nW:%s\nR:%s\n from %s", sourcedir, imagedir, deploydir, workdir, recipes, recipe)
         
         if not sourcedir:
             logger.error("sourcedir not found")
@@ -148,7 +160,7 @@ class BBdata:
             logger.error("workdir not found")
             return False
         
-        proj_data = ProjectData(sourcedir, imagedir, deploydir, workdir, recipe, srcrev)
+        proj_data = ProjectData(sourcedir, imagedir, deploydir, workdir, recipe, srcrev, recipes)
         
         self.append(project, proj_data)
         return True

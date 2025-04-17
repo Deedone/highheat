@@ -77,3 +77,10 @@ def get_project_srcrev(builddir: Path, project: str) -> str | None:
         return None
             
     return bbdata.data[project].srcrev
+
+def get_project_recipes(builddir: Path, project: str) -> list[str]:
+    bbdata = _load_bbdata(builddir, project)
+    if not bbdata:
+        return []
+
+    return bbdata.data[project].recipes

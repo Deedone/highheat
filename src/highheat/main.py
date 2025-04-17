@@ -4,10 +4,8 @@ import sys
 import time
 from pathlib import Path
 
+from highheat import config, shell, yocto
 from highheat import moulin_helpers as moulin
-from highheat import yocto
-from highheat import config
-from highheat import shell
 from highheat.log import logger, set_debug
 from highheat.project import find_project
 
@@ -103,6 +101,10 @@ Other examples:
     parser_deploy.add_argument('project', type=str, nargs="?", help='Project name, e.g. "linux"')
     parser_deploy.add_argument('target', type=str, help='Target: path do folder, image')
 
+    parser_info = subparsers.add_parser('info', help='Show project info', aliases=['i'])
+    parser_info.add_argument('domain', type=str, nargs="?", help='Project\'s domain, e.g. "domd"')
+    parser_info.add_argument('project', type=str, nargs="?", help='Project name, e.g. "linux"')
+
     args = parser.parse_args()
     if not args.action:
         parser.print_help()
@@ -166,6 +168,8 @@ def main():
         if not ret:
             return
         proj.deploy(args.target)
+    elif args.action == "info" or args.action == "i":
+        proj.info()
 
     if yocto.get_project_srcrev(yoctobuilddir, args.project) == "AUTOINC":
         logger.warning("%s uses ${AUTOREV}, make sure to backup your changes before running bitbake", args.project)
