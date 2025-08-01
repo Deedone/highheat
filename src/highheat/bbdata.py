@@ -94,7 +94,9 @@ class BBdata:
             return False
             
         if not self.data[key].sourcedir.exists():
+            logger.debug("Source dir not found")
             return False
+
         imagedir = self.data[key].imagedir
         if imagedir is not None:
             if not imagedir.exists():

@@ -52,6 +52,7 @@ class TransportRemoteRsync(Transport):
 
         if not ret:
             logger.error("Failed to upload %s:%s", self.host, self.target)
+            logger.error("If target is partially uploaded and broken you can reupload it by hand from %s", source)
             return False
 
         return True
