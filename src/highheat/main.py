@@ -8,6 +8,7 @@ from highheat import config, shell, yocto
 from highheat import moulin_helpers as moulin
 from highheat.log import logger, set_debug
 from highheat.project import find_project
+from highheat.project_interactive import ProjectInteractive
 
 #TODO: Use some magic-processing library to better determine file types
 #TODO: Better config docs
@@ -104,6 +105,9 @@ Other examples:
     parser_info = subparsers.add_parser('info', help='Show project info', aliases=['i'])
     parser_info.add_argument('domain', type=str, nargs="?", help='Project\'s domain, e.g. "domd"')
     parser_info.add_argument('project', type=str, nargs="?", help='Project name, e.g. "linux"')
+    
+    parser_editimg = subparsers.add_parser('editimg', help='Modify image interactively', aliases=['ei'])
+    parser_editimg.add_argument('target', type=str, help='Target: path do folder, image')
 
     args = parser.parse_args()
     if not args.action:
@@ -112,6 +116,14 @@ Other examples:
 
     return args
 
+def process_editimg(args):
+    if not args.target:
+        logger.error("Please specify target")
+        
+    logger.info("Editing image...")
+    proj = ProjectInteractive()
+    proj.deploy(args.target)
+    
 
 def main():
     conf = config.load()
@@ -130,6 +142,9 @@ def main():
 
     if args.noconfirm:
         conf.confirmcmd = False
+        
+    if args.action == "editimg":
+        return process_editimg(args)
 
     if args.domain and not args.project:
         args.project = args.domain
