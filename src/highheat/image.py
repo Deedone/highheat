@@ -35,9 +35,11 @@ class Image:
 
 from highheat import image_ext4
 from highheat import image_ramfs
+from highheat import image_ramfs_gz
 IMAGE_TYPES = [
     image_ext4.ImageExt4,
     image_ramfs.ImageRamfs,
+    image_ramfs_gz.ImageRamfsGZ,
     Image
 ]
 

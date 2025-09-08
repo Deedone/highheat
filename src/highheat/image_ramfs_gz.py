@@ -5,30 +5,8 @@ from highheat import image
 from highheat import shell
 from highheat.log import logger
 
-# unpack() {
-#     rm -rf ramfs
-#     mkdir ramfs
-#     cd ramfs
-#     echo "Extracting"
-#     tail -c+65 < ../uInitramfs > ./uInitramfs
-#     cat uInitramfs | gunzip > initramfs.cpio
-#     cpio -id < initramfs.cpio
-#     rm initramfs.cpio uInitramfs
-#     echo "Extracted to ./ramfs"
-# }
-
-# pack() {
-#         cd ramfs
-#         find . | cpio -o -H newc -R root:root | gzip -9 > ../initramfs.img
-#         echo "Creating image"
-#         mkimage -A arm64 -C gzip -T ramdisk -n "uInitramfs" -d ../initramfs.img ../uInitramfs
-#         rm ../initramfs.img
-#         cd ..
-
-# }
-
-class ImageRamfs(image.Image):
-    name:str = "ramfs u-boot"
+class ImageRamfsGZ(image.Image):
+    name:str = "ramfs.cpio.gz"
     mount_point:Path = Path()
     tempdir:tempfile.TemporaryDirectory | None = None
     mountable = True
@@ -41,11 +19,7 @@ class ImageRamfs(image.Image):
         self.tempdir = tempfile.TemporaryDirectory(dir=Path.cwd())
         self.mount_point = Path(self.tempdir.name)
 
-        zip = self.mount_point / "initramfs.zip"
-        ret = shell.run_cmd(f"tail -c+65 < {self.path} > {zip}")
-        if not ret:
-            logger.error("Failed to extract initramfs")
-            return None
+        zip = self.path
 
         cpio = self.mount_point / "initramfs.cpio"
         ret = shell.run_cmd(f"cat {zip} | gunzip > {cpio}")
@@ -67,7 +41,8 @@ class ImageRamfs(image.Image):
 
 
     def umount(self) -> None:
-        cpio = "initramfs.cpio"
+        cpio = "tmpramfs.cpio.gz"
+        logger.debug(f"Path {self.path}")
         if Path(cpio).exists():
             logger.error("initramfs.cpio exists, exiting to prevent data loss")
             return
@@ -77,9 +52,9 @@ class ImageRamfs(image.Image):
             logger.error("Failed to pack initramfs")
             return None
 
-        ret = shell.run_cmd(f"mkimage -A arm64 -C gzip -T ramdisk -n 'uInitramfs' -d {cpio} {self.path}")
+        ret = shell.run_cmd(f"cp \"{cpio}\" \"{self.path}\"")
         if not ret:
-            logger.error("Failed to pack initramfs")
+            logger.error("Failed to copy final image")
             return None
 
         shell.run_cmd(f"rm {cpio}")
@@ -89,4 +64,4 @@ class ImageRamfs(image.Image):
 
     @staticmethod
     def can_handle(path:str) -> bool:
-        return path.endswith("uInitramfs")
+        return path.endswith(".cpio.gz")
