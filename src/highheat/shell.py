@@ -122,3 +122,8 @@ def cleanup_dldir():
             age = now - datetime.fromtimestamp(file.stat().st_mtime)
             if age > config.conf.dldir_cleanup_interval:
                 try_delete(file)
+
+def get_zip_cmd():
+    if shutil.which("pigz") is not None:
+        return "pigz"
+    return "gzip"
