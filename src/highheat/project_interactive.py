@@ -3,6 +3,7 @@ from typing import List
 
 from highheat.log import logger
 from highheat import project
+from highheat import config
 from subprocess import run
 
 #TODO: Convert to find_image, leave default deploy impl
@@ -20,8 +21,14 @@ class ProjectInteractive(project.Project):
             logger.error("Prepare target failed")
             return
 
-        logger.info("Close this shell (Ctrl-D) to finish editing")
-        ret = run(f"cd {mounted} && $SHELL", shell=True)
+        if mounted.is_dir():
+            logger.info("Close this shell (Ctrl-D) to finish editing")
+            ret = run(f"cd {mounted} && $SHELL", shell=True)
+            
+        else:
+            editor = "vim"
+            logger.info("Close the editor (%s) to finish editing", editor)
+            ret = run(f"{editor} {mounted}", shell=True)
 
         if not ret:
             logger.error("Copy failed")
