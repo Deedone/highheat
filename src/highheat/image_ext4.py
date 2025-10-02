@@ -43,13 +43,15 @@ class ImageExt4(image.Image):
             ret = shell.run_cmd(f"sudo cp {src} {dst}")
         return ret
 
-    def umount(self) -> None:
+    def umount(self) -> bool:
         if self.mounted:
             shell.run_cmd(f"sudo umount {self.mount_point}")
             self.mounted = False
 
         if self.tempdir:
             self.tempdir.cleanup()
+
+        return True
 
 
     @staticmethod

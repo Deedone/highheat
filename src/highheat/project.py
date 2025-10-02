@@ -230,8 +230,13 @@ class Project:
             print("    ", recipe)
 
     def cleanup(self):
+        ret = True
         if self.img:
-            self.img.umount()
+            ret = self.img.umount()
+
+        if not ret:
+            logger.error("Unmount failed, not uploading changes")
+            return
 
         if self.tran:
             self.tran.upload()

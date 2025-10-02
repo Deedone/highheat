@@ -17,8 +17,8 @@ class Image:
     def mount(self) -> Path|None:
         return self.path
 
-    def umount(self) -> None:
-        pass
+    def umount(self) -> bool:
+        return True
 
     def install(self, src:Path, dst:Path) -> bool:
         if src.is_dir():

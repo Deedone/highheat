@@ -40,26 +40,28 @@ class ImageRamfsGZ(image.Image):
         return self.mount_point
 
 
-    def umount(self) -> None:
+    def umount(self) -> bool:
         cpio = "tmpramfs.cpio.gz"
         logger.debug(f"Path {self.path}")
         if Path(cpio).exists():
             logger.error("initramfs.cpio exists, exiting to prevent data loss")
-            return
+            return False
 
         ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio -o -H newc -R root:root | {shell.get_zip_cmd()} -9 > ../{cpio}")
         if not ret:
             logger.error("Failed to pack initramfs")
-            return None
+            return False
 
         ret = shell.run_cmd(f"cp \"{cpio}\" \"{self.path}\"")
         if not ret:
             logger.error("Failed to copy final image")
-            return None
+            return False
 
         shell.run_cmd(f"rm {cpio}")
         if self.tempdir:
             self.tempdir.cleanup()
+
+        return True
 
 
     @staticmethod
