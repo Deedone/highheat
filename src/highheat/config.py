@@ -13,6 +13,7 @@ CONFIG_PATHS:List[str] = [
 
 class Config:
     editorpath:str = 'vim'
+    ieditorpath:str = 'vim'
     verbose:bool = False
     dryrun:bool = False
     confirmcmd:bool = True
@@ -32,6 +33,8 @@ def load() -> Config:
                 config = yaml.safe_load(f)
                 if "editor" in config:
                     conf.editorpath = config["editor"]
+                if "interactive_editor" in config:
+                    conf.ieditorpath = config["interactive_editor"]
                 if "confirm" in config:
                     conf.confirmcmd = config["confirm"]
                 if "dldir" in config:

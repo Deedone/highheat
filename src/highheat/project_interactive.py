@@ -24,9 +24,9 @@ class ProjectInteractive(project.Project):
         if mounted.is_dir():
             logger.info("Close this shell (Ctrl-D) to finish editing")
             ret = run(f"cd {mounted} && $SHELL", shell=True)
-            
+
         else:
-            editor = "vim"
+            editor = config.conf.ieditorpath
             logger.info("Close the editor (%s) to finish editing", editor)
             ret = run(f"{editor} {mounted}", shell=True)
 

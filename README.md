@@ -116,7 +116,8 @@ $HOME/.config/highheat.yaml
 
 Sample configuration:
 ~~~yaml
-editor: vim # Preferred editor
+editor: code # Preferred editor
+interacve_editor: code -w # Editor for interactive editing, needs to not exit immediately(use wait flags for the GUI ones)
 confirm: True # Confirm before running shell commands
 dl_dir: ~/.cache/highheat # Persistent downloads directory
 dldir_cleanup_interval: 7 # Days between cleanup of old downloads
