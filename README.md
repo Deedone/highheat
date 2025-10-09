@@ -46,17 +46,19 @@ pip3 install --user git+https://github.com/deedone/highheat
 
 # Usage
 ~~~bash
-usage: hh [-h] [--verbose] [--dryrun] [--noconfirm] {edit,e,build,b,deploy,d,build-deploy,bd} ...
+usage: hh [-h] [--verbose] [--dryrun] [--noconfirm] {edit,e,build,b,deploy,d,build-deploy,bd,info,i,editimg,ei} ...
 
 HighHeat, a fast BitBake alternative
 
 positional arguments:
-  {edit,e,build,b,deploy,d,build-deploy,bd}
+  {edit,e,build,b,deploy,d,build-deploy,bd,info,i,editimg,ei}
                         Action to perform
     edit (e)            Open source dir in editor
     build (b)           Build project
     deploy (d)          Deploy project
     build-deploy (bd)   Build and deploy the project
+    info (i)            Show project info
+    editimg (ei)        Modify image interactively
 
 options:
   -h, --help            show this help message and exit
@@ -81,22 +83,36 @@ Other examples:
 
     Build xen-tools current yocto project:
         hh build xen-tools
-        
+
     Autodetect and build the project (based on the current directory)
         hh build
 
     Deploy xen-tools to /srv/tftp:
-        hh deploy xen-tools somehost:/srv/tftp
+        hh deploy xen-tools host:/srv/tftp
 
     Deploy qemu to domd-rootfs.ext4:
         hh deploy qemu /path/to/domd-rootfs.ext
-        
+
+    Interactively edit the ramfs image
+        hh editimg host:/srv/ironhide/mp/uInitramfs
+         (opens new shell inside the unpacked image)
+
+        hh editimg host:/srv/ironhide/mp/uInitramfs,/etc/xen/domd.cfg
+         (opens domd.cfg in your editor)
+
+    Interactively edit the DTB
+        hh editimg host:/srv/ironhide/mp/xen.dtb
+        Note: Decompiled dts is saved in cache to preserve
+        comments/formatting/broken code/etc
 ~~~
 
-The three main actions are edit, build and deploy.
-Edit opens the project source in the preferred editor.
-Build builds the project (runs the do_compile/install/deploy scripts).
-Deploy copies the built project to the target.
+The main actions are edit, build, deploy, info and editimg(interactive).
+*Edit* opens the project source in the preferred editor.
+*Build* builds the project (runs the do_compile/install/deploy scripts).
+*Deploy* copies the built project to the target.
+*Info* prints relevant project information, such as source/work/deploy dirs and used recipes.
+*Editimg* downloads/unpacks the specified image and lets you edit it by hand.
+
 
 Each command accepts the domain and the project name as arguments. Domain is only relevant for [Moulin](https://github.com/xen-troops/moulin) projects with multiple domains.
 For HH to be able to find the correct project, you need to run it from somewhere inside the yocto or moulin root directory.

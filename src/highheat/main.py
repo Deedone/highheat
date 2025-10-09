@@ -71,10 +71,22 @@ Other examples:
         hh build
 
     Deploy xen-tools to /srv/tftp:
-        hh deploy xen-tools somehost:/srv/tftp
+        hh deploy xen-tools host:/srv/tftp
 
     Deploy qemu to domd-rootfs.ext4:
         hh deploy qemu /path/to/domd-rootfs.ext
+
+    Interactively edit the ramfs image
+        hh editimg host:/srv/ironhide/mp/uInitramfs
+         (opens new shell inside the unpacked image)
+
+        hh editimg host:/srv/ironhide/mp/uInitramfs,/etc/xen/domd.cfg
+         (opens domd.cfg in your editor)
+
+    Interactively edit the DTB
+        hh editimg host:/srv/ironhide/mp/xen.dtb
+        Note: Decompiled dts is saved in cache to preserve
+        comments/formatting/broken code/etc
 """
 
     parser = argparse.ArgumentParser(description='HighHeat, a fast BitBake alternative', epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter)
