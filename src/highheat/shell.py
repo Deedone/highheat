@@ -124,6 +124,8 @@ def cleanup_dldir():
                 try_delete(file)
 
 def get_zip_cmd():
+    cmd = "gzip"
     if shutil.which("pigz") is not None:
-        return "pigz"
-    return "gzip"
+        cmd = "pigz"
+
+    return cmd + f" -{config.conf.complevel}"

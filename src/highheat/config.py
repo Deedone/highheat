@@ -19,6 +19,7 @@ class Config:
     confirmcmd:bool = True
     dldir:str = os.path.expanduser('~/.cache/highheat')
     dldir_cleanup_interval:timedelta = timedelta(days=7)
+    complevel = "9"
 
     def __str__(self) -> str:
         return f"editorpath: {self.editorpath} confirmcmd: {self.confirmcmd}"
@@ -41,6 +42,12 @@ def load() -> Config:
                     conf.dldir = os.path.expanduser(config["dldir"])
                 if "dldir_cleanup_interval" in config:
                     conf.dldir_cleanup_interval = timedelta(days=config["dldir_cleanup_interval"])
+                if "complevel" in config:
+                    clevel = str(config["complevel"])
+                    if clevel in ["1","2","3","4","5","6","7","8","9"]:
+                        conf.complevel = clevel
+                    else:
+                        logger.warning("Invalid complevel %s, using default %s", clevel, conf.complevel)
             break
 
 

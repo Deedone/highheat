@@ -137,4 +137,5 @@ interacve_editor: code -w # Editor for interactive editing, needs to not exit im
 confirm: True # Confirm before running shell commands
 dl_dir: ~/.cache/highheat # Persistent downloads directory
 dldir_cleanup_interval: 7 # Days between cleanup of old downloads
+complevel: 9 # Compression level for gzip
 ~~~

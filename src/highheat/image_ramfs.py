@@ -5,27 +5,6 @@ from highheat import image
 from highheat import shell
 from highheat.log import logger
 
-# unpack() {
-#     rm -rf ramfs
-#     mkdir ramfs
-#     cd ramfs
-#     echo "Extracting"
-#     tail -c+65 < ../uInitramfs > ./uInitramfs
-#     cat uInitramfs | gunzip > initramfs.cpio
-#     cpio -id < initramfs.cpio
-#     rm initramfs.cpio uInitramfs
-#     echo "Extracted to ./ramfs"
-# }
-
-# pack() {
-#         cd ramfs
-#         find . | cpio -o -H newc -R root:root | gzip -9 > ../initramfs.img
-#         echo "Creating image"
-#         mkimage -A arm64 -C gzip -T ramdisk -n "uInitramfs" -d ../initramfs.img ../uInitramfs
-#         rm ../initramfs.img
-#         cd ..
-
-# }
 
 class ImageRamfs(image.Image):
     name:str = "ramfs u-boot"
@@ -72,7 +51,7 @@ class ImageRamfs(image.Image):
             logger.error("initramfs.cpio exists, exiting to prevent data loss")
             return False
 
-        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio --reproducible -o -H newc -R root:root | {shell.get_zip_cmd()} -9 --rsyncable > ../{cpio}")
+        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio --reproducible -o -H newc -R root:root | {shell.get_zip_cmd()} --rsyncable > ../{cpio}")
         if not ret:
             logger.error("Failed to pack initramfs")
             return False
