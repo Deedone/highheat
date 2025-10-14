@@ -72,7 +72,7 @@ class ImageRamfs(image.Image):
             logger.error("initramfs.cpio exists, exiting to prevent data loss")
             return False
 
-        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio -o -H newc -R root:root | {shell.get_zip_cmd()} -9 > ../{cpio}")
+        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio --reproducible -o -H newc -R root:root | {shell.get_zip_cmd()} -9 --rsyncable > ../{cpio}")
         if not ret:
             logger.error("Failed to pack initramfs")
             return False
