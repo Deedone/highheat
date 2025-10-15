@@ -44,7 +44,7 @@ def direct_logs(cmdlin:str, master:int):
             except OSError:
                 break
             print(data,end="")
-    
+
 
 def status_logs(cmdline:str, master:int):
     terminal_width = shutil.get_terminal_size().columns
@@ -68,12 +68,12 @@ def status_logs(cmdline:str, master:int):
             end = "" if data.endswith("\n") else "\n"
             print(data,end=end)
             print(spinnertext + "\r", end="")
-        
+
     cursor.show()
     spinnertext = h.frame()
     print(filler + "\r") # Clear previous spinner line
-    sys.stdout.flush() 
-    
+    sys.stdout.flush()
+
 
 def run_cmd(command: str) -> bool:
     log_cmd(command)
@@ -89,12 +89,12 @@ def run_cmd(command: str) -> bool:
         os.close(slave)
         flags = fcntl.fcntl(master, fcntl.F_GETFL)
         fcntl.fcntl(master, fcntl.F_SETFL, flags | os.O_NONBLOCK)
-        
+
         if sys.stdout.isatty():
             status_logs(command, master)
         else:
             direct_logs(command, master)
-        
+
         return result.wait() == 0
     except subprocess.CalledProcessError as e:
         logger.error("Command '%s' failed with error: %d", command, e.returncode)

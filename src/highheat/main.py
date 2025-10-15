@@ -40,7 +40,7 @@ def guess_project() -> str | None:
             return cwd.parent.name
         if cwd.name == "kernel-source":
             return "virtual/kernel"
-            
+
         cwd = cwd.parent
 
     return None
@@ -117,7 +117,7 @@ Other examples:
     parser_info = subparsers.add_parser('info', help='Show project info', aliases=['i'])
     parser_info.add_argument('domain', type=str, nargs="?", help='Project\'s domain, e.g. "domd"')
     parser_info.add_argument('project', type=str, nargs="?", help='Project name, e.g. "linux"')
-    
+
     parser_editimg = subparsers.add_parser('editimg', help='Modify image interactively', aliases=['ei'])
     parser_editimg.add_argument('target', type=str, help='Target: path do folder, image')
 
@@ -131,11 +131,11 @@ Other examples:
 def process_editimg(args):
     if not args.target:
         logger.error("Please specify target")
-        
+
     logger.info("Editing image...")
     proj = ProjectInteractive()
     proj.deploy(args.target)
-    
+
 
 def main():
     conf = config.load()
@@ -154,7 +154,7 @@ def main():
 
     if args.noconfirm:
         conf.confirmcmd = False
-        
+
     if args.action == "editimg":
         return process_editimg(args)
 
@@ -201,7 +201,7 @@ def main():
     if yocto.get_project_srcrev(yoctobuilddir, args.project) == "AUTOINC":
         logger.warning("%s uses ${AUTOREV}, make sure to backup your changes before running bitbake", args.project)
     shell.cleanup_dldir()
-    
+
     elapsed_time = time.time() - start
     formatted_time = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
     logger.info("Execution took: %s", formatted_time)

@@ -50,7 +50,7 @@ class Project:
 
     def find_image(self) -> Path|None:
         return yocto.get_project_imagedir(self.yoctobuilddir, self.projname)
-    
+
     def find_deploydir(self) -> Path|None:
         return yocto.get_project_deploydir(self.yoctobuilddir, self.projname)
 
@@ -164,24 +164,24 @@ class Project:
         if subpath:
             logger.error("Subpath are not supported for direct image types")
             return
-            
+
         image_path = self.find_image()
-        
+
         if not image_path:
             logger.error("Unable to found project image directory")
             return
-            
+
         self.tran = transport.find_transport(target)
         if not self.tran:
             logger.error("Transport not found")
             return None
-            
+
         self.tran.install(image_path, target)
 
     def deploy(self, target:str) -> None:
         if not image.needs_mount(target):
             return self.deploy_fast(target)
-            
+
         logger.debug("deploy %s to %s", self.projname, target)
         if not self.initialized:
             return

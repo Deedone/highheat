@@ -10,10 +10,10 @@ from subprocess import run
 class ProjectInteractive(project.Project):
 
     projname:str = "interactive"
-    
+
     def __init__(self):
         self.initialized = True
-        
+
     def deploy(self, target:str) -> None:
         mounted = self.prepare_target(target)
 

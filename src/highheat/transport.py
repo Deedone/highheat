@@ -19,7 +19,7 @@ class Transport:
 
     def upload(self) -> bool:
         return True
-        
+
     def install(self, src:Path, dst:str) -> bool:
         if src.is_dir():
             ret = shell.run_cmd(f"cp -r {src}/* {dst}")

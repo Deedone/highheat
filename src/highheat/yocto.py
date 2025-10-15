@@ -13,8 +13,8 @@ def find_yocto_root(start: Path) -> Path | None:
 
     logger.error("yocto root not found")
     return None
-    
-    
+
+
 def find_yocto_source(start: Path) -> Path | None:
     while start != Path('/'):
         poky_path = start / "poky"
@@ -24,19 +24,19 @@ def find_yocto_source(start: Path) -> Path | None:
 
     logger.error("yocto source not found")
     return None
-    
+
 
 def _load_bbdata(builddir: Path, project: str) -> BBdata | None:
     bbdata = BBdata(builddir)
     yocto_root = find_yocto_source(builddir)
     if not yocto_root:
         return None
-    
+
     if not bbdata.check_entry(project):
         if not bbdata.bb_load_projectdata(yocto_root, builddir, project):
             logger.error("failed to load project data for %s", project)
             return None
-        
+
     return bbdata
 
 
@@ -44,7 +44,7 @@ def get_project_workdir(builddir: Path, project: str) -> Path | None:
     bbdata = _load_bbdata(builddir, project)
     if not bbdata:
         return None
-        
+
     return bbdata.data[project].workdir
 
 
@@ -52,15 +52,15 @@ def get_project_srcdir(builddir: Path, project: str) -> Path | None:
     bbdata = _load_bbdata(builddir, project)
     if not bbdata:
         return None
-        
+
     return bbdata.data[project].sourcedir
-    
-    
+
+
 def get_project_imagedir(builddir: Path, project: str) -> Path | None:
     bbdata = _load_bbdata(builddir, project)
     if not bbdata:
         return None
-            
+
     return bbdata.data[project].imagedir
 
 
@@ -68,14 +68,14 @@ def get_project_deploydir(builddir: Path, project: str) -> Path | None:
     bbdata = _load_bbdata(builddir, project)
     if not bbdata:
         return None
-            
+
     return bbdata.data[project].deploydir
 
 def get_project_srcrev(builddir: Path, project: str) -> str | None:
     bbdata = _load_bbdata(builddir, project)
     if not bbdata:
         return None
-            
+
     return bbdata.data[project].srcrev
 
 def get_project_recipes(builddir: Path, project: str) -> list[str]:
