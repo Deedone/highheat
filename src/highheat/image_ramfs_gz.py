@@ -47,17 +47,16 @@ class ImageRamfsGZ(image.Image):
             logger.error("initramfs.cpio exists, exiting to prevent data loss")
             return False
 
-        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio -o -H newc -R root:root | {shell.get_zip_cmd()} > ../{cpio}")
+        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio --reproducible -o -H newc -R root:root | {shell.get_zip_cmd()} --rsyncable > ../{cpio}")
         if not ret:
             logger.error("Failed to pack initramfs")
             return False
 
-        ret = shell.run_cmd(f"cp \"{cpio}\" \"{self.path}\"")
+        ret = shell.run_cmd(f"mv \"{cpio}\" \"{self.path}\"")
         if not ret:
-            logger.error("Failed to copy final image")
+            logger.error("Failed to move final image")
             return False
 
-        shell.run_cmd(f"rm {cpio}")
         if self.tempdir:
             self.tempdir.cleanup()
 

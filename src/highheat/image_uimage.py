@@ -5,11 +5,13 @@ from highheat import image
 from highheat import shell
 from highheat.log import logger
 
+from highheat.image_ramfs_gz import ImageRamfsGZ
 
-class ImageRamfs(image.Image):
+class ImageUImage(image.Image):
     name:str = "ramfs u-boot"
     mount_point:Path = Path()
     tempdir:tempfile.TemporaryDirectory | None = None
+    unpacker:ImageRamfsGZ | None = None
     mountable = True
 
     def __init__(self, path:Path):
@@ -26,42 +28,38 @@ class ImageRamfs(image.Image):
             logger.error("Failed to extract initramfs")
             return None
 
-        cpio = self.mount_point / "initramfs.cpio"
-        ret = shell.run_cmd(f"cat {zip} | gunzip > {cpio}")
-        if not ret:
-            logger.error("Failed to extract initramfs")
-            return None
+        self.unpacker = ImageRamfsGZ(zip)
+        unpacked = self.unpacker.mount()
 
-        ret = shell.run_cmd(f"cd {self.mount_point} && cpio -id < {cpio}")
-        if not ret:
+        if not unpacked:
             logger.error("Failed to extract initramfs")
             return None
-
-        ret = shell.run_cmd(f"rm {cpio} {zip}")
-        if not ret:
-            logger.error("Failed to extract initramfs")
-            return None
+        self.mount_point = unpacked
 
         return self.mount_point
 
 
     def umount(self) -> bool:
-        cpio = "initramfs.cpio"
-        if Path(cpio).exists():
-            logger.error("initramfs.cpio exists, exiting to prevent data loss")
+        if not self.unpacker:
+            logger.error("No unpacker available, cannot umount")
             return False
 
-        ret = shell.run_cmd(f"cd {self.mount_point} && find . | cpio --reproducible -o -H newc -R root:root | {shell.get_zip_cmd()} --rsyncable > ../{cpio}")
+        ret = self.unpacker.umount()
+        if not ret:
+            logger.error("Failed to umount inner ramfs")
+            return False
+
+        packed = self.unpacker.path
+        if not packed.exists():
+            logger.fatal("No packed initramfs found, this should not happen please report")
+            return False
+
+        ret = shell.run_cmd(f"mkimage -A arm64 -C gzip -T ramdisk -n 'uInitramfs' -d {packed} {self.path}")
         if not ret:
             logger.error("Failed to pack initramfs")
             return False
 
-        ret = shell.run_cmd(f"mkimage -A arm64 -C gzip -T ramdisk -n 'uInitramfs' -d {cpio} {self.path}")
-        if not ret:
-            logger.error("Failed to pack initramfs")
-            return False
-
-        shell.run_cmd(f"rm {cpio}")
+        shell.run_cmd(f"rm {packed}")
         if self.tempdir:
             self.tempdir.cleanup()
 
