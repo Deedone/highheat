@@ -18,9 +18,16 @@ class TransportRemoteRsync(Transport):
     def __init__(self, target:str):
         self.host, self.target = target.split(":")
 
+    def get_cache_dir_name(self) -> str:
+        return f"{self.host}-{self.target}" \
+        .replace("/","-") \
+        .replace(" ", "-") \
+        .replace("--", "-") \
+        .replace(".", "-")
+
     def download(self) -> Path|None:
         dldir = Path(config.conf.dldir)
-        target = dldir / Path(self.target).name
+        target = dldir / self.get_cache_dir_name()
         if not dldir.exists():
             dldir.mkdir(parents=True)
 
@@ -38,8 +45,7 @@ class TransportRemoteRsync(Transport):
 
     def upload(self) -> bool:
         dldir = Path(config.conf.dldir)
-        target_name = Path(self.target).name
-        source = dldir / target_name
+        source = dldir / self.get_cache_dir_name()
 
         if not dldir.exists():
             logger.error("Download directory %s does not exist", dldir)
