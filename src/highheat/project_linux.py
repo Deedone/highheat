@@ -35,7 +35,29 @@ class ProjectLinux(project.Project):
             logger.error("Prepare target failed")
             return
 
+        if mounted.is_dir():
+            logger.info("Target is a folder, deploying modules")
+            logger.info("To deploy a Kernel image use file as a target")
+            return self.deploy_modules(mounted)
+
+
         ret = self.img.install(image, mounted)
+        if not ret:
+            logger.error("Copy failed")
+            return
+
+        logger.info("%s: Deploy successful", self.projname)
+
+        self.cleanup()
+
+    def deploy_modules(self, mounted:Path) -> None:
+        imagedir = self.find_image()
+
+        if not imagedir or not imagedir.exists():
+            logger.error("Image dir %s don't exist", imagedir)
+            return
+
+        ret = self.img.install(imagedir, mounted)
         if not ret:
             logger.error("Copy failed")
             return

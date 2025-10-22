@@ -42,6 +42,7 @@ class Project:
         logger.debug("Initialized project %s in %s %s", name, workdir, srcdir)
 
 
+#TODO: fix signatures
     def find_workdir(self, yoctobuilddir:Path, name:str) -> Path|None:
         return yocto.get_project_workdir(yoctobuilddir, name)
 
