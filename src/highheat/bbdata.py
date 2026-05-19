@@ -91,24 +91,38 @@ class BBdata:
     def check_entry(self, key:str) -> bool:
         logger.debug("Checking entry %s", key)
         if key not in self.data:
+            logger.debug("Key not found")
             return False
 
         if not self.data[key].sourcedir.exists():
             logger.debug("Source dir not found")
             return False
 
+        deploy_present = False
+        image_present = False
+
         imagedir = self.data[key].imagedir
         if imagedir is not None:
-            if not imagedir.exists():
-                return False
+            if imagedir.exists():
+                image_present = True
+            else:
+                logger.debug("Image dir not found %s", imagedir)
 
         deploydir = self.data[key].deploydir
         if deploydir is not None:
-            if not deploydir.exists():
-                return False
+            if deploydir.exists():
+                deploy_present = True
+            else:
+                logger.debug("Deploy dir not found %s", deploydir)
+
+        if not deploy_present and not image_present:
+            logger.debug("Neither deploy nor image dir present")
+            return False
         if not self.data[key].workdir.exists():
+            logger.debug("Work dir not present %s", self.data[key].workdir)
             return False
         if not self.data[key].recpie_path.exists():
+            logger.debug("Recipe path not present %s", self.data[key].recpie_path)
             return False
 
         return True
