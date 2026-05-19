@@ -45,4 +45,4 @@ class ImageDtb(image.Image):
 
     @staticmethod
     def can_handle(path:str) -> bool:
-        return path.endswith(".dtb")
+        return path.endswith(".dtb") or path.endswith("-dtb")
