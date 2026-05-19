@@ -32,7 +32,7 @@ class ImageRamfsGZ(image.Image):
             logger.error("Failed to extract initramfs")
             return None
 
-        ret = shell.run_cmd(f"rm {cpio} {zip}")
+        ret = shell.run_cmd(f"rm {cpio}")
         if not ret:
             logger.error("Failed to extract initramfs")
             return None
