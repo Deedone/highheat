@@ -60,7 +60,7 @@ class Project:
         if not self.initialized:
             return
 
-        shell.run_cmd(f"{config.conf.editorpath} {self.srcdir}")
+        shell.spawn_editor(f"{config.conf.editorpath} {self.srcdir}")
 
 
     def run_compile(self, workdir: Path) -> bool:

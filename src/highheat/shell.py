@@ -138,6 +138,15 @@ def run_cmd(command: str) -> bool:
         logger.error("Command '%s' failed with error: %d", command, e.returncode)
         return False
 
+def spawn_editor(command) -> int:
+    cmdstr = command if isinstance(command, str) else " ".join(command)
+    log_cmd(cmdstr)
+    if config.conf.dryrun:
+        return 0
+    result = subprocess.run(command, shell=isinstance(command, str),
+                            stdin=None, stdout=None, stderr=None)
+    return result.returncode
+
 def try_delete(p:Path):
     logger.debug("p exists %d p is_dir %d", p.exists(), p.is_dir())
     try:
