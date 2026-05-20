@@ -4,7 +4,7 @@ from highheat.log import logger
 from highheat.bbdata import BBdata
 
 # TODO: refactor to not load json for every call
-def find_yocto_root(start: Path) -> Path | None:
+def find_yocto_build_dir(start: Path) -> Path | None:
     while start != Path('/'):
         localconf = start / "conf" / "local.conf"
         if localconf.exists():

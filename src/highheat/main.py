@@ -29,7 +29,7 @@ def get_yoctobuilddir(domain:str|None) -> Path | None:
 
         return build_dirs[domain]
     else:
-        builddir = yocto.find_yocto_root(Path.cwd())
+        builddir = yocto.find_yocto_build_dir(Path.cwd())
         return builddir
 
 def guess_project() -> str | None:

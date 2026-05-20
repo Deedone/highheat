@@ -81,14 +81,3 @@ class TransportRemoteRsync(Transport):
     def can_handle(target:str) -> bool:
         return ":" in target
 
-
-TRANSPORT_TYPES = [
-    Transport
-]
-
-def find_transport(target:str) -> Transport|None:
-    for transport_type in TRANSPORT_TYPES:
-        if transport_type.can_handle(target):
-            logger.info("Using %s transport type", transport_type.name)
-            return transport_type(target)
-    return None
