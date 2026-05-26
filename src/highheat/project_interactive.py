@@ -14,12 +14,12 @@ class ProjectInteractive(project.Project):
     def __init__(self):
         self.initialized = True
 
-    def deploy(self, target:str) -> None:
+    def deploy(self, target:str) -> bool | None:
         mounted = self.prepare_target(target)
 
         if not mounted:
             logger.error("Prepare target failed")
-            return
+            return False
 
         if mounted.is_dir():
             logger.info("Close this shell (Ctrl-D) to finish editing")
@@ -31,15 +31,18 @@ class ProjectInteractive(project.Project):
         else:
             editor = config.conf.ieditorpath
             logger.info("Close the editor (%s) to finish editing", editor)
-            ret = run(f"{editor} {mounted}", shell=True)
+            run(f"{editor} {mounted}", shell=True)
+            ret = True
 
         if not ret:
-            logger.error("Copy failed")
-            return
+            return False
+
 
         logger.info("Image editing done")
 
         self.cleanup()
+
+        return True
 
     @staticmethod
     def can_handle(target:str) -> bool:

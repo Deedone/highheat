@@ -179,7 +179,7 @@ class Project:
 
         self.tran.install(image_path, target)
 
-    def deploy(self, target:str) -> None:
+    def deploy(self, target:str) -> bool | None:
         if not image.needs_mount(target):
             return self.deploy_fast(target)
 
